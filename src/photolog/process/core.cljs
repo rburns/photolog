@@ -25,6 +25,10 @@
   [photo]
   (assoc photo :height-scale (/ (:height photo) (:width photo))))
 
+(defn transform
+  [photos]
+  (into [] (comp (map transform-keys) (map add-height-scale)) photos))
+
 (defn write-transit
   [path data]
   (let [write-file-sync (.-writeFileSync (node/require "fs"))
