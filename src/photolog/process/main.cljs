@@ -1,12 +1,12 @@
 (ns photolog.process.main
-  (:require [photolog.process.core :as p]))
+  (:require [photolog.process.core :refer [process write]]))
 
 (defn- main
   []
   (let [img-dir   "../my-photolog/photos/"
         props     ["CreateDate" "ExposureTime" "ScaleFactor35efl" "FocalLength" "LensType"
                    "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight"]]
-    (p/write-transit "public/photos.json" (p/transform (p/exif-data img-dir props)))))
+    (write "public/photos.json" (process img-dir props))))
 
 (enable-console-print!)
 

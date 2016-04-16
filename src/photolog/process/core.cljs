@@ -29,8 +29,12 @@
   [photos]
   (into [] (comp (map transform-keys) (map add-height-scale)) photos))
 
-(defn write-transit
+(defn write
   [path data]
   (let [write-file-sync (.-writeFileSync (node/require "fs"))
         output          (t/write (t/writer :json) data)]
     (write-file-sync path output)))
+
+(defn process
+  [img-dir props]
+  (transform (exif-data img-dir props)))
