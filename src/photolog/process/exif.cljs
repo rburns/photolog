@@ -1,4 +1,4 @@
-(ns photolog.process.core
+(ns photolog.process.exif
   (:require [cljs.nodejs :as node]
             [clojure.string :refer [join]]
             [cognitect.transit :as t]))
@@ -35,6 +35,6 @@
         output          (t/write (t/writer :json) data)]
     (write-file-sync path output)))
 
-(defn process
+(defn extract
   [img-dir props]
   (transform (exif-data img-dir props)))
