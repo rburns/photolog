@@ -1,6 +1,7 @@
 (ns photolog.process.main
   (:require [cljs.nodejs :as node]
-            [clojure.string :refer [join]]))
+            [clojure.string :refer [join]]
+            [cognitect.transit :as t]))
 
 (defn exif-data
   []
@@ -26,18 +27,16 @@
   [photo]
   (assoc photo :height-scale (/ (:height photo) (:width photo))))
 
-(defn write-cljs
-  [path namespace & vars]
+(defn write-transit
+  [path data]
   (let [write-file-sync (.-writeFileSync (node/require "fs"))
-        namespace       (str "(ns " namespace ")")
-        vars            (map #(str "(def "  (first %) " " (last %) ")") (partition 2 vars))
-        out             (str namespace (first vars))]
-    (write-file-sync path out)))
+        output          (t/write (t/writer :json) data)]
+    (write-file-sync path output)))
 
 (defn- main
   []
   (let [exif-data (map add-height-scale (map transform-keys (exif-data)))]
-    (write-cljs "public/photos.cljs" 'photolog.photos 'photos exif-data)))
+    (write-transit "public/photos.json" exif-data)))
 
 (enable-console-print!)
 
