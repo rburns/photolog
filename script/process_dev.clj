@@ -11,6 +11,7 @@
                             :output-to "process/main.js"
                             :output-dir "process/out"
                             :target :nodejs
+                            :optimizations :none
                             :parallel-build true}}]})
 
 (ra/cljs-repl)

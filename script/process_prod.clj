@@ -5,4 +5,5 @@
                        :output-to "process/main.js"
                        :output-dir "process/out"
                        :target :nodejs
+                       :optimizations :simple
                        :parallel-build true})
