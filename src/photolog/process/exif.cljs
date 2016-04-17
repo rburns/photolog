@@ -1,12 +1,11 @@
 (ns photolog.process.exif
-  (:require [cljs.nodejs :as node]
+  (:require [photolog.process.node-deps :refer [write-file-sync exec-sync]]
             [clojure.string :refer [join]]
             [cognitect.transit :as t]))
 
 (defn exif-data
   [path props]
-  (let [exec-sync (.-execSync (node/require "child_process"))
-        props     (join " " (map #(str "-" %) props))
+  (let [props     (join " " (map #(str "-" %) props))
         exiftool  (str "exiftool -j " props " ./" path "*.JPG")]
     (js->clj (.parse js/JSON (exec-sync exiftool)))))
 
@@ -31,9 +30,7 @@
 
 (defn write
   [path data]
-  (let [write-file-sync (.-writeFileSync (node/require "fs"))
-        output          (t/write (t/writer :json) data)]
-    (write-file-sync path output)))
+  (write-file-sync path (t/write (t/writer :json) data)))
 
 (defn extract
   [img-dir props]
