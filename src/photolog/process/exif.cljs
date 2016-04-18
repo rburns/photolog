@@ -11,11 +11,11 @@
 
 (defn transform-keys
   [photo]
-  (let [key-map {"CreateDate"       :created           "ExposureTime"     :exposure
-                 "ScaleFactor35efl" :focal-lenth-scale "FocalLength"      :focal-length
-                 "LensType"         :lens              "Aperture"         :aperture
-                 "ISO"              :iso               "Model"            :model
-                 "ImageWidth"       :width             "ImageHeight"      :height
+  (let [key-map {"CreateDate"       :created   "ExposureTime" :exposure
+                 "ScaleFactor35efl" :efl-scale "FocalLength"  :focal-length
+                 "LensType"         :lens      "Aperture"     :aperture
+                 "ISO"              :iso       "Model"        :model
+                 "ImageWidth"       :width     "ImageHeight"  :height
                  "SourceFile"       :file}
         transform-key (fn [kv] [(get key-map (first kv)) (last kv)])]
     (into {} (map transform-key (into [] photo)))))
