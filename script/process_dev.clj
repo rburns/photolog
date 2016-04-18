@@ -1,17 +1,10 @@
-(require '[figwheel-sidecar.repl :as r]
-         '[figwheel-sidecar.repl-api :as ra])
+(require 'cljs.build.api)
 
-(ra/start-figwheel!
-  {:figwheel-options {:server-logfile "/tmp/figwheel_server.log"}
-   :build-ids ["process-dev"]
-   :all-builds [{:id "process-dev"
-                 :figwheel true
-                 :source-paths ["src"]
-                 :compiler {:main 'photolog.process.main
-                            :output-to "process/main.js"
-                            :output-dir "process/out"
-                            :target :nodejs
-                            :optimizations :none
-                            :parallel-build true}}]})
+(cljs.build.api/watch "src/photolog/process"
+                      {:main 'photolog.process.main
+                       :output-to "process/main.js"
+                       :output-dir "process/out"
+                       :target :nodejs
+                       :optimizations :none
+                       :parallel-build true})
 
-(ra/cljs-repl)
