@@ -1,6 +1,5 @@
 (ns photolog.process.main
   (:require [clojure.string :refer [join]]
-            [cljs.core.async :as async]
             [cognitect.transit :as transit]
             [photolog.process.node-deps :refer [resolve-path exec-sync sharp write-file-sync
                                                 path-basename path-extension write-stdout]]))
