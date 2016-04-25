@@ -47,12 +47,10 @@
   [prefix breakpoints photo]
   (assoc photo :srcset (join "," (srcset prefix (:file photo) breakpoints))))
 
-(defn print-resize-error
+(defn print-feedback
   ""
   [error info]
-  (if (some? error)
-    (println (str "Image resize error: " error))
-    (write-stdout ".")))
+  (if (some? error) (println (str "Image resize error: " error)) (write-stdout ".")))
 
 (defn resize
   ""
@@ -64,7 +62,7 @@
     (try
       (-> (sharp source-path)
           (.resize width height)
-          (.toFile (output-path output-dir source-path label) print-resize-error))
+          (.toFile (output-path output-dir source-path label) print-feedback))
       (catch :default error (print-resize-error error nil)))))
 
 (defn resize-for-breakpoints
