@@ -1,4 +1,4 @@
-(ns photolog.process.main
+(ns photolog.process.core
   (:require [clojure.string :refer [join]]
             [cognitect.transit :as transit]
             [photolog.process.node-deps :refer [resolve-path exec-sync sharp write-file-sync
@@ -87,26 +87,15 @@
   [path data]
   (write-file-sync path (transit/write (transit/writer :json) data)))
 
-(defn- main
-  ""
-  []
-  (let [img-dir     (resolve-path "../my-photolog/photos/")
-        _           (println (str "img-dir: " img-dir))
-        props       ["CreateDate" "ExposureTime" "ScaleFactor35efl" "FocalLength" "LensType"
-                     "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight"]
-        breakpoints [[:tiny 200] [:small 556] [:medium 804] [:large 1000]]
-        output-dir  (resolve-path "./public/img")
-        _           (println (str "output-dir: " output-dir))
-        href-dir    (resolve-path "/img")
-        transform   (comp (map with-pretty-keys)
+(defn process-photos
+  [config]
+  (let [transform   (comp (map with-pretty-keys)
                           (map with-height-scale)
-                          (map (partial with-href href-dir))
-                          (map (partial with-srcset href-dir breakpoints)))
-        output      (into [] transform (exif-data img-dir props))]
-    (doseq [photo output] (resize-with-breakpoints! breakpoints output-dir photo))
-    (doseq [photo output] (copy-original! output-dir photo))
-    (write-transit! "./public/photos.json" output)))
-
-(enable-console-print!)
-
-(set! *main-cli-fn* main)
+                          (map (partial with-href (:href-prefix config)))
+                          (map (partial with-srcset (:href-prefix config) (:breakpoints config))))
+        output      (into [] transform (exif-data (:img-src-dir config) (:exif-props config)))]
+    (doseq [photo output]
+      (resize-with-breakpoints! (:breakpoints config) (:img-out-dir config) photo))
+    (doseq [photo output]
+      (copy-original! (:img-out-dir config) photo))
+    (write-transit! (:metadata-path config) output)))
