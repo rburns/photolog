@@ -1,7 +1,9 @@
 (ns photolog.process.main
   (:require [clojure.string :refer [join]]
+            [cljs.core.async :as async]
             [cognitect.transit :as transit]
-            [photolog.process.node-deps :refer [resolve-path exec-sync sharp write-file-sync]]))
+            [photolog.process.node-deps :refer [resolve-path exec-sync sharp write-file-sync
+                                                path-basename path-extension write-stdout]]))
 
 (defn exif-data
   [path props]
@@ -24,27 +26,52 @@
   [photo]
   (assoc photo :height-scale (/ (:height photo) (:width photo))))
 
+(defn output-file
+  [source-path label]
+  (str (path-basename source-path) "-" (name label) (path-extension source-path)))
+
+(defn output-path
+  [output-dir source-path label]
+  (str output-dir "/" (output-file source-path label)))
+
+(defn srcset-element
+  [prefix source-path breakpoint]
+  (str prefix "/" (output-file source-path (first breakpoint)) " " (last breakpoint) "w"))
+
+(defn srcset
+  [prefix source-path breakpoints]
+  (let [element  (partial srcset-element prefix source-path)]
+   (reduce #(conj %1 (element %2)) [] breakpoints)))
+
+(defn add-srcset
+  [prefix breakpoints photo]
+  (assoc photo :srcset (join "," (srcset prefix (:file photo) breakpoints))))
+
 (defn print-resize-error
   ""
   [error info]
-  (when (some? error) (println (str "Image resize error: " error))))
+  (if (some? error)
+    (println (str "Image resize error: " error))
+    (write-stdout ".")))
 
 (defn resize
   ""
-  [source-path output-dir longest-edge]
-  (let [width  longest-edge
-        height (/ (* longest-edge 2) 3)]
-    (fn []
-      (try
-        (-> (sharp source-path)
-            (.resize width height)
-            (.toFile "/home/rburns/projects/photolog/test_photo.jpg" print-resize-error))
-        (catch :default error (print-resize-error error nil))))))
+  [source-path output-dir breakpoint]
+  (let [label        (first breakpoint)
+        longest-edge (last breakpoint)
+        width        (.floor js/Math longest-edge)
+        height       (.floor js/Math (/ (* longest-edge 2) 3))]
+    (try
+      (-> (sharp source-path)
+          (.resize width height)
+          (.toFile (output-path output-dir source-path label) print-resize-error))
+      (catch :default error (print-resize-error error nil)))))
 
 (defn resize-for-breakpoints
   ""
   [breakpoints output-dir photo]
-  (assoc photo :resized (map (partial resize (:file photo)) breakpoints)))
+  (doseq [breakpoint breakpoints] (resize (:file photo) output-dir breakpoint))
+  photo)
 
 (defn write
   ""
@@ -58,11 +85,12 @@
         _           (println (str "img-dir: " img-dir))
         props       ["CreateDate" "ExposureTime" "ScaleFactor35efl" "FocalLength" "LensType"
                      "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight"]
-        breakpoints [1000 804 556 200]
+        breakpoints [[:tiny 200] [:small 556] [:medium 804] [:large 1000]]
         output-dir  (resolve-path "./public/img")
         _           (println (str "output-dir: " output-dir))
         transform   (comp (map transform-keys)
                           (map add-height-scale)
+                          (map (partial add-srcset "/img" breakpoints))
                           (map (partial resize-for-breakpoints breakpoints output-dir)))
         output      (into [] transform (exif-data img-dir props))]))
 
