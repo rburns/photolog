@@ -2,7 +2,8 @@
   (:require [clojure.string :refer [join]]
             [cognitect.transit :as transit]
             [photolog.process.node-deps :refer [resolve-path exec-sync sharp write-file-sync
-                                                path-basename path-extension write-stdout]]))
+                                                path-basename path-extension write-stdout
+                                                file-read-stream file-write-stream]]))
 
 (defn exif-data
   [path props]
@@ -27,7 +28,9 @@
 
 (defn output-file
   [source-path label]
-  (str (path-basename source-path) "-" (name label) (path-extension source-path)))
+  (str (path-basename source-path)
+       (when label (str "-" (name label)))
+       (path-extension source-path)))
 
 (defn output-path
   [output-dir source-path label]
@@ -45,6 +48,10 @@
 (defn with-srcset
   [prefix breakpoints photo]
   (assoc photo :srcset (join "," (srcset prefix (:file photo) breakpoints))))
+
+(defn with-href
+  [prefix photo]
+  (assoc photo :href (str prefix "/" (path-basename (:file photo)) (path-extension (:file photo)))))
 
 (defn print-feedback
   ""
@@ -70,6 +77,11 @@
   (doseq [breakpoint breakpoints] (resize (:file photo) output-dir breakpoint))
   photo)
 
+(defn copy-original!
+  [output-dir photo]
+  (.pipe (file-read-stream (:file photo))
+         (file-write-stream (output-path output-dir (:file photo) nil))))
+
 (defn write-transit!
   ""
   [path data]
@@ -85,11 +97,14 @@
         breakpoints [[:tiny 200] [:small 556] [:medium 804] [:large 1000]]
         output-dir  (resolve-path "./public/img")
         _           (println (str "output-dir: " output-dir))
+        href-dir    (resolve-path "/img")
         transform   (comp (map with-pretty-keys)
                           (map with-height-scale)
-                          (map (partial with-srcset "/img" breakpoints))
-                          (map (partial resize-with-breakpoints! breakpoints output-dir)))
+                          (map (partial with-href href-dir))
+                          (map (partial with-srcset href-dir breakpoints)))
         output      (into [] transform (exif-data img-dir props))]
+    (doseq [photo output] (resize-with-breakpoints! breakpoints output-dir photo))
+    (doseq [photo output] (copy-original! output-dir photo))
     (write-transit! "./public/photos.json" output)))
 
 (enable-console-print!)

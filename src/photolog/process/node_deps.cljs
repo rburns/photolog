@@ -2,6 +2,9 @@
   (:require [cljs.nodejs :as node]))
 
 (def write-file-sync (.-writeFileSync (node/require "fs")))
+(def file-read-stream (.-createReadStream (node/require "fs")))
+(def file-write-stream (.-createWriteStream (node/require "fs")))
+
 (def exec-sync (.-execSync (node/require "child_process")))
 (def sharp (node/require "sharp"))
 
