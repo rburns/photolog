@@ -6,12 +6,14 @@
                                                 file-read-stream file-write-stream]]))
 
 (defn exif-data
+  ""
   [path props]
   (let [props     (join " " (map #(str "-" %) props))
         exiftool  (str "exiftool -j " props " " path "/*.JPG")]
     (js->clj (.parse js/JSON (exec-sync exiftool)))))
 
 (defn with-pretty-keys
+  ""
   [photo]
   (let [key-map {"CreateDate"       :created   "ExposureTime" :exposure
                  "ScaleFactor35efl" :efl-scale "FocalLength"  :focal-length
@@ -23,6 +25,7 @@
     (into {} (map transform-key (into [] photo)))))
 
 (defn with-height-scale
+  ""
   [photo]
   (assoc photo :height-scale (/ (:height photo) (:width photo))))
 
@@ -88,6 +91,7 @@
   (write-file-sync path (transit/write (transit/writer :json) data)))
 
 (defn process-photos
+  ""
   [config]
   (let [transform   (comp (map with-pretty-keys)
                           (map with-height-scale)
