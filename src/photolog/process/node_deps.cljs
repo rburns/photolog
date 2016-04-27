@@ -10,6 +10,7 @@
 (def resolve-path (let [resolve (.-resolve (node/require "path"))]
                     (fn [path] (when (string? path) (resolve path)))))
 (def path-extension (.-extname (node/require "path")))
+(def path-dirname (.-dirname (node/require "path")))
 (def path-basename (let [basename (.-basename (node/require "path"))]
                      (fn [path] (basename path (path-extension path)))))
 

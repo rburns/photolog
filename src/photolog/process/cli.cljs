@@ -2,7 +2,7 @@
   (:require [cljs.pprint :refer [pprint]]
             [photolog.process.core :refer [process-photos]]
             [photolog.process.node-deps :refer [resolve-path process-argv file-exists-sync
-                                                read-file-sync]]))
+                                                read-file-sync path-dirname path-basename]]))
 
 (def defaults
   ""
@@ -40,7 +40,18 @@
 (defn valid-config
   ""
   [config]
-  config)
+  (cond
+    (not (file-exists-sync (:img-src-dir config)))
+    (println "img-src-dir must specify a valid directory path.")
+    (not (file-exists-sync (:img-out-dir config)))
+    (println "img-out-dir must specify a valid directory path.")
+    (not (file-exists-sync (path-dirname (:metadata-path config))))
+    (println "metadata-path must refer to a valid directory.")
+    (nil? (path-basename (:metadata-path config)))
+    (println "metadata-path must include a file name.")
+    (nil? (:href-prefix config))
+    (println "href-prefix must be specified")
+    :else config))
 
 (defn config-with-defaults
   ""
