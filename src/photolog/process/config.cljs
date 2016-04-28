@@ -1,6 +1,6 @@
 (ns photolog.process.config
-  (:require [photolog.process.node-deps :refer [resolve-path process-argv file-exists-sync
-                                                read-file-sync path-dirname path-basename]]))
+  (:require [photolog.process.node-deps :refer [resolve-path file-exists-sync read-file-sync
+                                                path-dirname path-basename]]))
 
 (def defaults
   ""
@@ -12,6 +12,11 @@
                    "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight"]
    :breakpoints   [[:tiny 200] [:small 556] [:medium 804] [:large 1000]]})
 
+(defn handle-error
+  [handler error]
+  (handler error)
+  nil)
+
 (defn with-resolved-paths
   ""
   [config]
@@ -22,13 +27,13 @@
 
 (defn parsed-config
   ""
-  [config-path]
+  [config-path error-fn]
   (if (file-exists-sync config-path)
     (try (-> (.parse js/JSON (read-file-sync config-path))
              (js->clj :keywordize-keys true)
              with-resolved-paths)
-         (catch js/Error e (println (str config-path " is not valid JSON."))))
-    (println (str config-path " does not exist."))))
+         (catch js/Error e (handle-error error-fn (str config-path " is not valid JSON."))))
+    (handle-error error-fn (str config-path " does not exist."))))
 
 (defn merged-config
   ""
@@ -37,27 +42,26 @@
 
 (defn valid-config
   ""
-  [config]
+  [config error-fn]
   (cond
+    (nil? config)
+    nil
     (not (file-exists-sync (:img-src-dir config)))
-    (println "img-src-dir must specify a valid directory path.")
+    (handle-error error-fn "img-src-dir must specify a valid directory path.")
     (not (file-exists-sync (:img-out-dir config)))
-    (println "img-out-dir must specify a valid directory path.")
+    (handle-error error-fn "img-out-dir must specify a valid directory path.")
     (not (file-exists-sync (path-dirname (:metadata-path config))))
-    (println "metadata-path must refer to a valid directory.")
+    (handle-error error-fn "metadata-path must refer to a valid directory.")
     (nil? (path-basename (:metadata-path config)))
-    (println "metadata-path must include a file name.")
+    (handle-error error-fn "metadata-path must include a file name.")
     (nil? (:href-prefix config))
-    (println "href-prefix must be specified")
+    (handle-error error-fn "href-prefix must be specified")
     :else config))
 
 (defn config-with-defaults
   ""
-  [default-config]
-  (if (>= (count process-argv) 3)
-    (-> (resolve-path (last process-argv))
-        parsed-config
-        (merged-config default-config)
-        valid-config)
-    (println "Please provide a config file.")))
-
+  [config-path default-config error-fn]
+  (-> config-path
+      (parsed-config error-fn)
+      (merged-config default-config)
+      (valid-config error-fn)))
