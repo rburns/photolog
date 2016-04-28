@@ -32,7 +32,7 @@
     (try (-> (.parse js/JSON (read-file-sync config-path))
              (js->clj :keywordize-keys true)
              with-resolved-paths)
-         (catch js/Error e (handle-error error-fn (str config-path " is not valid JSON."))))
+         (catch :default error (handle-error error-fn (str config-path " is not valid JSON."))))
     (handle-error error-fn (str config-path " does not exist."))))
 
 (defn merged-config
