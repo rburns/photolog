@@ -5,5 +5,6 @@
                        :output-to "process/main.js"
                        :output-dir "process/out"
                        :target :nodejs
+                       :static-fns true
                        :optimizations :simple
                        :parallel-build true})
