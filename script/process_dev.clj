@@ -6,5 +6,5 @@
                        :output-dir "process/out"
                        :target :nodejs
                        :optimizations :none
-                       :parallel-build true})
-
+                       :parallel-build true
+                       :source-map true})
