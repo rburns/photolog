@@ -10,7 +10,9 @@
    :href-prefix   nil,
    :exif-props    ["CreateDate" "ExposureTime" "ScaleFactor35efl" "FocalLength" "LensType"
                    "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight"]
-   :breakpoints   [[:tiny 200] [:small 556] [:medium 804] [:large 1000]]})
+   :breakpoints   [[:tiny 200] [:small 556] [:medium 804] [:large 1000]]
+   :format        :transit
+   :html-tmpl     nil})
 
 (defn handle-error
   [handler error]

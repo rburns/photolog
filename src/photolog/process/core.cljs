@@ -3,7 +3,8 @@
             [cognitect.transit :as transit]
             [photolog.process.node-deps :refer [resolve-path exec-sync sharp write-file-sync
                                                 path-basename path-extension write-stdout
-                                                file-read-stream file-write-stream]]))
+                                                file-read-stream file-write-stream]]
+            [photolog.process.html :refer [write-html!]]))
 
 (defn exif-data
   ""
@@ -90,6 +91,12 @@
   [path data]
   (write-file-sync path (transit/write (transit/writer :json) data)))
 
+(defn write-output!
+  [format path data template]
+  (condp = format
+    :transit (write-transit! path data)
+    "html"   (write-html! path data template)))
+
 (defn process-photos
   ""
   [config]
@@ -102,4 +109,4 @@
       (resize-with-breakpoints! (:breakpoints config) (:img-out-dir config) photo))
     (doseq [photo output]
       (copy-original! (:img-out-dir config) photo))
-    (write-transit! (:metadata-path config) output)))
+    (write-output! (:format config) (:metadata-path config) output (:html-tmpl config))))
