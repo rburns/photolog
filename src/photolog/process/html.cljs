@@ -4,7 +4,20 @@
 
 (defn as-html-image
   [image]
-  (str "<div></div>"))
+  (str "<a class=\"photo\" href=\"" (:href image) "\" target=\"blank\">"
+         "<img srcset=\"" (:srcset image) "\" "
+              "data-created=\"" (:created image) "\" "
+              "data-aperature=\"" (:aperature image) "\" "
+              "data-exposure=\"" (:exposure image) "\" "
+              "data-focal-length=\"" (:focal-length image) "\" "
+              "data-lens=\"" (:lens image) "\" "
+              "data-model=\"" (:model image) "\" "
+              "data-efl-scale\"" (:efl-scale image) "\" "
+              "data-height=\"" (:height image) "\" "
+              "data-width=\"" (:width image) "\" "
+              "data-height-scale=\"" (:height-scale image) "\" "
+         "/>"
+       "</a>"))
 
 (defn write-html!
   [path data template]
