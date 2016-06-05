@@ -10,8 +10,10 @@
   ""
   [path props]
   (let [props     (join " " (map #(str "-" %) props))
-        exiftool  (str "exiftool -j " props " " path "/*.JPG")]
-    (js->clj (.parse js/JSON (exec-sync exiftool)))))
+        exiftool  (str "exiftool -j " props " -ext JPG -fileOrder DateTimeOriginal " path)]
+    (try
+      (js->clj (.parse js/JSON (exec-sync exiftool)))
+      (catch :default error (println error)))))
 
 (defn with-pretty-keys
   ""
