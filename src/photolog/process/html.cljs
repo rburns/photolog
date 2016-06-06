@@ -1,10 +1,11 @@
 (ns photolog.process.html
   (:require [clojure.string :refer [replace join]]
-            [photolog.process.node-deps :refer [read-file-sync write-file-sync]]))
+            [photolog.process.node-deps :refer [read-file-sync write-file-sync path-basename]]))
 
 (defn as-html-image
   [image]
-  (str "<a class=\"photo\" href=\"" (:href image) "\" target=\"blank\">"
+  (str "<a class=\"photo\" id=\"" (path-basename (:file image)) "\""
+          "href=\"" (:href image) "\" target=\"blank\">"
          "<img srcset=\"" (:srcset image) "\" "
               "data-created=\"" (:created image) "\" "
               "data-aperture=\"" (:aperture image) "\" "
