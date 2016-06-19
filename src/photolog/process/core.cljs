@@ -59,6 +59,18 @@
   [prefix photo]
   (assoc photo :href (str prefix "/" (path-basename (:file photo)) (path-extension (:file photo)))))
 
+(defn sizes-element
+  [prefix source-path breakpoint]
+  {:label (name (first breakpoint))
+   :href (str prefix "/" (output-file source-path (first breakpoint)))})
+
+(defn with-sizes
+  [prefix breakpoints photo]
+  (assoc photo :sizes (concat (map (partial sizes-element prefix (:file photo)) breakpoints)
+                              [{:label "original"
+                                :href (str prefix "/" (path-basename (:file photo))
+                                           (path-extension (:file photo)))}])))
+
 (defn print-feedback
   ""
   [error info]
@@ -105,6 +117,7 @@
   (let [transform   (comp (map with-pretty-keys)
                           (map with-height-scale)
                           (map (partial with-href (:href-prefix config)))
+                          (map (partial with-sizes (:href-prefix config) (:breakpoints config)))
                           (map (partial with-srcset (:href-prefix config) (:breakpoints config))))
         output      (into [] transform (exif-data (:img-src-dir config) (:exif-props config)))]
     (doseq [photo output]

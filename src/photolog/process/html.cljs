@@ -18,6 +18,7 @@
               "data-height=\"" (:height image) "\" "
               "data-width=\"" (:width image) "\" "
               "data-height-scale=\"" (:height-scale image) "\" "
+              "data-sizes='" (.stringify js/JSON (clj->js (:sizes image))) "' "
          "/>"
        "</a>"))
 
