@@ -4,8 +4,7 @@
 
 (defn as-html-image
   [image]
-  (str "<a class=\"photo\" id=\"" (first (split (path-basename (:file image)) ".")) "\""
-          "href=\"" (:href image) "\" target=\"blank\">"
+  (str "<div class=\"photo\" id=\"" (first (split (path-basename (:file image)) ".")) "\">"
          "<img srcset=\"" (:srcset image) "\" "
               "data-created=\"" (:created image) "\" "
               "data-aperture=\"" (:aperture image) "\" "
@@ -20,7 +19,7 @@
               "data-height-scale=\"" (:height-scale image) "\" "
               "data-sizes='" (.stringify js/JSON (clj->js (:sizes image))) "' "
          "/>"
-       "</a>"))
+       "</div>"))
 
 (defn write-html!
   [path data template]
