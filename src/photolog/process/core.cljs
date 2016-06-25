@@ -27,6 +27,18 @@
         transform-key (fn [kv] [(get key-map (first kv)) (last kv)])]
     (into {} (map transform-key (into [] photo)))))
 
+(defn with-placeholder-text
+  [photo]
+  (cond-> photo
+    (nil? (:lens photo)) (assoc :lens "unknown lens")
+    (nil? (:model photo)) (assoc :lens "unknown camera")))
+
+(defn with-custom-exif-transforms
+  [photo]
+  (cond-> photo
+    (= "Digimax A6" (:model photo)) (assoc :model "Samsung Digimax A6")
+    (= "E5900" (:model photo)) (assoc :model "Nikon COOLPIX E5900")))
+
 (defn with-height-scale
   ""
   [photo]
@@ -115,6 +127,8 @@
   ""
   [config]
   (let [transform   (comp (map with-pretty-keys)
+                          (map with-placeholder-text)
+                          (map with-custom-exif-transforms) ;<- should be specified in config
                           (map with-height-scale)
                           (map (partial with-href (:href-prefix config)))
                           (map (partial with-sizes (:href-prefix config) (:breakpoints config)))
