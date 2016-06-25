@@ -92,12 +92,10 @@
   ""
   [source-path output-dir breakpoint]
   (let [label        (first breakpoint)
-        longest-edge (last breakpoint)
-        width        (.floor js/Math longest-edge)
-        height       (.floor js/Math (/ (* longest-edge 2) 3))]
+        width        (.floor js/Math (last breakpoint))]
     (try
       (-> (sharp source-path)
-          (.resize width height)
+          (.resize width nil)
           (.toFile (output-path output-dir source-path label) print-feedback))
       (catch :default error (print-feedback error nil)))))
 
