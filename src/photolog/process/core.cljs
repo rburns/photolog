@@ -30,14 +30,17 @@
 (defn with-placeholder-text
   [photo]
   (cond-> photo
-    (nil? (:lens photo)) (assoc :lens "unknown lens")
-    (nil? (:model photo)) (assoc :lens "unknown camera")))
+    (empty? (:lens photo)) (assoc :lens "unknown lens")
+    (empty? (:model photo)) (assoc :model "unknown camera")))
 
 (defn with-custom-exif-transforms
   [photo]
   (cond-> photo
     (= "Digimax A6" (:model photo)) (assoc :model "Samsung Digimax A6")
-    (= "E5900" (:model photo)) (assoc :model "Nikon COOLPIX E5900")))
+    (= "E5900" (:model photo)) (assoc :model "Nikon COOLPIX E5900")
+    (= "COOLPIX S200" (:model photo)) (assoc :model "Nikon COOLPIX S200")
+    (= "E-M5MARKII" (:model photo)) (assoc :model "Olympus E-M5 MkII")
+    (= "FE190/X750" (:model photo)) (assoc :model "Olympus FE-190")))
 
 (defn with-height-scale
   ""
