@@ -99,6 +99,8 @@
     (try
       (-> (sharp source-path)
           (.resize width nil)
+          (.quality 95)
+          (.withoutChromaSubsampling)
           (.toFile (output-path output-dir source-path label) print-feedback))
       (catch :default error (print-feedback error nil)))))
 
