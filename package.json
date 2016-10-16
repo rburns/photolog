@@ -2,6 +2,7 @@
   "scripts": {
     "process-dev": "rlwrap lein run -m clojure.main script/process_dev.clj",
     "process-prod": "npm run clean && lein run -m clojure.main script/process_prod.clj",
+    "test": "rlwrap lein run -m clojure.main script/test.clj",
     "clean": "rm -rf process && rm -rf target"
   },
   "dependencies": {
