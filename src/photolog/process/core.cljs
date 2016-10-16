@@ -34,13 +34,16 @@
     (empty? (:model photo)) (assoc :model "unknown camera")))
 
 (defn with-custom-exif-transforms
-  [photo]
-  (cond-> photo
-    (= "Digimax A6" (:model photo)) (assoc :model "Samsung Digimax A6")
-    (= "E5900" (:model photo)) (assoc :model "Nikon COOLPIX E5900")
-    (= "COOLPIX S200" (:model photo)) (assoc :model "Nikon COOLPIX S200")
-    (= "E-M5MARKII" (:model photo)) (assoc :model "Olympus E-M5 MkII")
-    (= "FE190/X750" (:model photo)) (assoc :model "Olympus FE-190")))
+  [transforms photo]
+  (loop [photo photo
+         t     0]
+    (if (> (count transforms) t)
+      (let [transform (nth transforms t)
+            t-key     (nth transform 0)
+            t-from    (nth transform 1)
+            t-to      (nth transform 2)]
+        (recur (if (= (photo t-key) t-from) (assoc photo t-key t-to) photo) (inc t)))
+      photo)))
 
 (defn with-height-scale
   ""
@@ -131,7 +134,7 @@
   [config]
   (let [transform   (comp (map with-pretty-keys)
                           (map with-placeholder-text)
-                          (map with-custom-exif-transforms) ;<- should be specified in config
+                          (map (partial with-custom-exif-transforms (:exif-transforms config)))
                           (map with-height-scale)
                           (map (partial with-href (:href-prefix config)))
                           (map (partial with-sizes (:href-prefix config) (:breakpoints config)))
