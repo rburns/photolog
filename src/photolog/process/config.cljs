@@ -19,6 +19,18 @@
   (handler error)
   nil)
 
+(defn with-keyword-names
+  ""
+  [breakpoints]
+  (map #(vector (keyword (first %)) (last %)) breakpoints))
+
+(defn with-keywordized-values
+  ""
+  [config]
+  (cond-> config
+    (:metadata-format config) (assoc :metadata-format (keyword (:metadata-format config)))
+    (:breakpoints config) (assoc :breakpoints (with-keyword-names (:breakpoints config)))))
+
 (defn with-resolved-paths
   ""
   [config]
@@ -32,6 +44,7 @@
   [config error-fn]
   (try (-> (.parse js/JSON config)
            (js->clj :keywordize-keys true)
+           with-keywordized-values
            with-resolved-paths)
        (catch :default error (handle-error error-fn (str config-path " is not valid JSON.")))))
 
@@ -68,4 +81,3 @@
         (merged-config default-config)
         (valid-config error-fn))
     (handle-error error-fn (str config-path " does not exist."))))
-

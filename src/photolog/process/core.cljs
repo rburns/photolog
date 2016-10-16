@@ -127,7 +127,7 @@
   [format path data template]
   (condp = format
     :transit (write-transit! path data)
-    "html"   (write-html! path data template)))
+    :html   (write-html! path data template)))
 
 (defn process-photos
   ""
