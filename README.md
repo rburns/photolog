@@ -21,8 +21,8 @@ create a config file.
 {
   "img-src-dir": "/path/to/your/images",
   "img-out-dir": "/path/to/write/images",
-  "metadata-path": "/path/to/img-metadata.json",
-  "href-prefix": "/webroot/subdirectory"
+  "metadata-path": "/path/to/write/img-metadata.json",
+  "href-prefix": "/eg/webroot/relative/path/to/images"
 }
 ```
 
