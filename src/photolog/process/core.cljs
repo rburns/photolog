@@ -144,4 +144,4 @@
       (resize-with-breakpoints! (:breakpoints config) (:img-out-dir config) photo))
     (doseq [photo output]
       (copy-original! (:img-out-dir config) photo))
-    (write-output! (:format config) (:metadata-path config) output (:html-tmpl config))))
+    (write-output! (:metadata-format config) (:metadata-path config) output (:html-tmpl config))))
