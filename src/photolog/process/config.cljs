@@ -29,13 +29,12 @@
 
 (defn parsed-config
   ""
-  [config-path error-fn]
-  (if (file-exists-sync config-path)
-    (try (-> (.parse js/JSON (read-file-sync config-path))
-             (js->clj :keywordize-keys true)
-             with-resolved-paths)
-         (catch :default error (handle-error error-fn (str config-path " is not valid JSON."))))
-    (handle-error error-fn (str config-path " does not exist."))))
+  [config error-fn]
+  (try (-> (.parse js/JSON config)
+           (js->clj :keywordize-keys true)
+           with-resolved-paths)
+       (catch :default error (handle-error error-fn (str config-path " is not valid JSON.")))))
+
 
 (defn merged-config
   ""
@@ -63,7 +62,10 @@
 (defn config-with-defaults
   ""
   [config-path default-config error-fn]
-  (-> config-path
-      (parsed-config error-fn)
-      (merged-config default-config)
-      (valid-config error-fn)))
+  (if (file-exists-sync config-path)
+    (-> (read-file-sync config-path)
+        (parsed-config error-fn)
+        (merged-config default-config)
+        (valid-config error-fn))
+    (handle-error error-fn (str config-path " does not exist."))))
+
