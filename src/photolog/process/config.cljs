@@ -4,18 +4,32 @@
 
 (def defaults
   ""
-  {:img-src-dir   nil,
-   :img-out-dir   nil,
-   :metadata-path nil,
-   :href-prefix   nil,
-   :exif-props    ["CreateDate" "ExposureTime" "ScaleFactor35efl" "FocalLength" "LensType"
-                   "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight"]
-   :breakpoints   [[:tiny 200] [:small 556] [:medium 804] [:large 1000]]})
+  {:img-src-dir     nil,
+   :img-out-dir     nil,
+   :metadata-path   nil,
+   :href-prefix     nil,
+   :exif-props      ["CreateDate" "ExposureTime" "ScaleFactor35efl" "FocalLength" "LensType"
+                     "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight"]
+   :breakpoints     [[:tiny 200] [:small 556] [:medium 804] [:large 1000]]
+   :metadata-format :transit
+   :html-tmpl       nil})
 
 (defn handle-error
   [handler error]
   (handler error)
   nil)
+
+(defn with-keyword-names
+  ""
+  [breakpoints]
+  (map #(vector (keyword (first %)) (last %)) breakpoints))
+
+(defn with-keywordized-values
+  ""
+  [config]
+  (cond-> config
+    (:metadata-format config) (assoc :metadata-format (keyword (:metadata-format config)))
+    (:breakpoints config) (assoc :breakpoints (with-keyword-names (:breakpoints config)))))
 
 (defn with-resolved-paths
   ""
@@ -27,13 +41,13 @@
 
 (defn parsed-config
   ""
-  [config-path error-fn]
-  (if (file-exists-sync config-path)
-    (try (-> (.parse js/JSON (read-file-sync config-path))
-             (js->clj :keywordize-keys true)
-             with-resolved-paths)
-         (catch :default error (handle-error error-fn (str config-path " is not valid JSON."))))
-    (handle-error error-fn (str config-path " does not exist."))))
+  [config error-fn]
+  (try (-> (.parse js/JSON config)
+           (js->clj :keywordize-keys true)
+           with-keywordized-values
+           with-resolved-paths)
+       (catch :default error (handle-error error-fn (str config-path " is not valid JSON.")))))
+
 
 (defn merged-config
   ""
@@ -61,7 +75,9 @@
 (defn config-with-defaults
   ""
   [config-path default-config error-fn]
-  (-> config-path
-      (parsed-config error-fn)
-      (merged-config default-config)
-      (valid-config error-fn)))
+  (if (file-exists-sync config-path)
+    (-> (read-file-sync config-path)
+        (parsed-config error-fn)
+        (merged-config default-config)
+        (valid-config error-fn))
+    (handle-error error-fn (str config-path " does not exist."))))
