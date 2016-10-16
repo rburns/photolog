@@ -14,7 +14,7 @@ visual journal. current status: resizes and generates metadata for a directory o
 ```npm run clean```
 
 
-### create a config file.
+### create a config file
 
 it's JSON
 
