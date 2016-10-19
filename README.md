@@ -37,11 +37,23 @@ the default properties are _CreateDate, ExposureTime, ScaleFactor35efl, FocalLen
 
 an array of name, width pairs. the default breakpoints are _[["tiny", 200], ["small", 556], ["medium", 804], ["large", 1000]]_
 
+`metadata-format` the format of the output metadata. _transit_, or _html_. defaults to transit
+
 `html-tmpl` the path of the template to be used for html output.
 
-there is no default value. the string _##PHOTOS##_ in the template will be replaced with image metadata
+there is no default value. when _metadata-format_ is _html_, this key is required. the string _##PHOTOS##_ in the template will be replaced with image metadata
 
-`metadata-format` the format of the output metadata. _transit_, or _html_. defaults to transit
+`exif-transforms` arbitrary transformations of exif values
+
+described as an array of _key_, _value_, _new-value_ triplets. example use: cleaning up camera
+names.
+
+```
+"exif-transforms": [
+    ["model", "Digimax A6", "Samsung Digimax A6"],
+    ["model", "FE190/X750", "Olympus FE-190"],
+]
+```
 
 ### running
 
