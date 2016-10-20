@@ -21,14 +21,14 @@
   }")
 
 (deftest top-level-keys-are-keywords
-  (is (every? keyword? (keys (c/parsed-config sample-config)))))
+  (is (every? keyword? (keys (c/parsed-config sample-config #())))))
 
 (deftest metatdata-format-value-is-keyword
-  (is (keyword? (:metadata-format (c/parsed-config sample-config)))))
+  (is (keyword? (:metadata-format (c/parsed-config sample-config #())))))
 
 (deftest breakpoint-names-are-keywords
-  (is (= 2 (count (:breakpoints (c/parsed-config sample-config)))))
-  (is (every? keyword? (map first (:breakpoints (c/parsed-config sample-config))))))
+  (is (= 2 (count (:breakpoints (c/parsed-config sample-config #())))))
+  (is (every? keyword? (map first (:breakpoints (c/parsed-config sample-config #()))))))
 
 (deftest parsed-config-adds-no-keys
   (is (= 4 (count (keys (c/parsed-config minimal-config))))))
