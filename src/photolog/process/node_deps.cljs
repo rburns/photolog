@@ -1,6 +1,9 @@
 (ns photolog.process.node-deps
   (:require [cljs.nodejs :as node]))
 
+(def file-stat (.-stat (node/require "fs")))
+(def read-dir (.-readdir (node/require "fs")))
+
 (def write-file-sync (.-writeFileSync (node/require "fs")))
 (def read-file-sync (.-readFileSync (node/require "fs")))
 (def file-exists-sync (.-existsSync (node/require "fs")))

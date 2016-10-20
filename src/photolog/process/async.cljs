@@ -1,6 +1,6 @@
 (ns photolog.process.async
   (:require [cljs.core.async :refer [chan >! close!]]
-            [photolog.process.node-deps :refer [file-stat]])
+            [photolog.process.node-deps :as cb])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn ->single-value-chan
@@ -15,3 +15,6 @@
              (go (>! result-chan {:error error})
                  (close! result-chan))))
       result-chan)))
+
+(def file-stat (->single-value-chan cb/file-stat))
+(def read-dir (->single-value-chan cb/read-dir))
