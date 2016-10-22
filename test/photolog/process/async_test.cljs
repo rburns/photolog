@@ -38,3 +38,17 @@
                  error-chan (a/->single-value-chan error-cb)]
              (go (is (= {:error "error"} (<! (error-chan 1))))
                  (done))))))
+
+(testing "chan-in-out"
+
+  (deftest foo-bar-baz
+    (is (= true false))))
+
+; (deftest dummy-foo
+;   (async done
+;          (let [path   "/home/rburns/images/testing/"
+;                photos (a/photos-in-dir (fn [filename] true) path)]
+;            (go-loop [photo (<! photos)]
+;                     (if (some? photo)
+;                       (do (println photo) (recur (<! photos)))
+;                       (done))))))
