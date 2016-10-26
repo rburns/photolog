@@ -154,12 +154,12 @@
 
 (defn step
   ""
-  [step]
+  [s]
   (let [chan? #(satisfies? cljs.core.async.impl.protocols/ReadPort %)]
     (fn [ch]
       (go
         (let [arg (<! ch)]
-          (if (some? (:error arg)) arg (let [return (step arg)]
+          (if (some? (:error arg)) arg (let [return (s arg)]
                                          (if (chan? return) (<! return) return))))))))
 
 (defn photo-processor
