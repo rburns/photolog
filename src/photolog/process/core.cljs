@@ -1,12 +1,11 @@
 (ns photolog.process.core
   (:require [clojure.string :refer [join]]
             [cljs.core.async :as async :refer [chan onto-chan <!]]
-            [cognitect.transit :as transit]
-            [photolog.process.platform-node :refer [resolve-path sharp write-file-sync
-                                                    path-basename path-extension write-stdout
-                                                    timestamps file-exists-error?]]
-            [photolog.process.async :refer [stat-path read-dir exec link-path]]
-            [photolog.process.html :refer [write-html!]])
+            [photolog.process.platform-node :refer [resolve-path sharp write-file-sync stat-path
+                                                    path-basename path-extension write-stdout exec
+                                                    timestamps file-exists-error? link-path
+                                                    read-dir]]
+            [photolog.process.output :refer [write-output!]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn image?
@@ -187,17 +186,6 @@
           files  (<! (read-dir dir-path))]
       (onto-chan return files)
       return)))
-
-(defn write-transit!
-  ""
-  [path data]
-  (write-file-sync path (transit/write (transit/writer :json) data)))
-
-(defn write-output!
-  [format path data template]
-  (condp = format
-    :transit (write-transit! path data)
-    :html   (write-html! path data template)))
 
 (defn process
   ""
