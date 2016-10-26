@@ -11,8 +11,7 @@
    :exif-props      ["CreateDate" "ExposureTime" "ScaleFactor35efl" "FocalLength" "LensType"
                      "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight"]
    :breakpoints     [[:tiny 200] [:small 556] [:medium 804] [:large 1000]]
-   :metadata-format :transit
-   :html-tmpl       nil})
+   :metadata-format :transit})
 
 (defn handle-error
   [handler error]
@@ -46,7 +45,7 @@
            (js->clj :keywordize-keys true)
            with-keywordized-values
            with-resolved-paths)
-       (catch :default error (handle-error error-fn (str config-path " is not valid JSON.")))))
+       (catch :default error (handle-error error-fn "config is not valid JSON."))))
 
 
 (defn merged-config

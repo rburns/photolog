@@ -1,7 +1,13 @@
 (ns photolog.process.node-deps
   (:require [cljs.nodejs :as node]))
 
-(def file-stat (.-stat (node/require "fs")))
+(def stat-path (.-stat (node/require "fs")))
+
+(defn timestamps
+  [stat]
+  {:file-created (.getTime (.-birthtime stat))
+   :file-modified (.getTime (.-mtime stat))})
+
 (def read-dir (.-readdir (node/require "fs")))
 
 (def write-file-sync (.-writeFileSync (node/require "fs")))
@@ -22,4 +28,8 @@
                     (fn [output] (.write stdout output))))
 
 (def exec-sync (.-execSync (node/require "child_process")))
+(def exec (.-exec (node/require "child_process")))
+
 (def sharp (node/require "sharp"))
+
+

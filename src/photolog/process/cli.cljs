@@ -1,8 +1,10 @@
 (ns photolog.process.cli
   (:require [cljs.pprint :refer [pprint]]
-            [photolog.process.core :refer [process-photos]]
+            [cljs.core.async :as async :refer [<!]]
+            [photolog.process.core :refer [process]]
             [photolog.process.config :refer [config-with-defaults defaults]]
-            [photolog.process.node-deps :refer [resolve-path process-argv]]))
+            [photolog.process.node-deps :refer [resolve-path process-argv]])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn- main
   ""
@@ -13,7 +15,10 @@
       (when config
         (println "\nUsing config:\n")
         (pprint  config)
-        (process-photos config)))
+        (process config)
+        (go (let [summary (<! (process config))]
+              (println "\nComplete.\n")
+              (println (str "photos: " (:count summary)))))))
     (println "Please provide a config file.")))
 
 (enable-console-print!)

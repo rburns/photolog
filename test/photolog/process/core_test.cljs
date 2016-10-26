@@ -4,21 +4,20 @@
 
 (deftest empty-transforms
   (is (= {:foo "bar"}
-         (p/with-custom-exif-transforms [] {:foo "bar"}))))
+         (p/with-transformed-exif-values [] {:foo "bar"}))))
 
 (deftest non-applicable-transform
   (is (= {:foo "bar"}
-         (p/with-custom-exif-transforms [[:foo "a" "b"]] {:foo "bar"}))))
+         (p/with-transformed-exif-values [[:foo "a" "b"]] {:foo "bar"}))))
 
 (deftest applicable-transform
   (is (= {:foo "b"}
-         (p/with-custom-exif-transforms [[:foo "a" "b"]] {:foo "a"}))))
+         (p/with-transformed-exif-values [[:foo "a" "b"]] {:foo "a"}))))
 
 (deftest applicable-transform-of-many
   (is (= {:foo "b"}
-         (p/with-custom-exif-transforms [[:foo "a" "b"]
-                                         [:foo "c" "d"]] {:foo "a"}))))
+         (p/with-transformed-exif-values [[:foo "a" "b"] [:foo "c" "d"]] {:foo "a"}))))
 
 (deftest many-applicable-transforms
   (is (= {:foo "b", :bar "d"}
-         (p/with-custom-exif-transforms [[:foo "a" "b"] [:bar "c" "d"]] {:foo "a", :bar "c"}))))
+         (p/with-transformed-exif-values [[:foo "a" "b"] [:bar "c" "d"]] {:foo "a", :bar "c"}))))
