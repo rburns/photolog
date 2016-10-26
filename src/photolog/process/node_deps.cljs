@@ -10,11 +10,15 @@
 
 (def read-dir (.-readdir (node/require "fs")))
 
+(def link-path (.-link (node/require "fs")))
+
+(defn file-exists-error?
+  [err]
+  (= "EEXIST" (.-code err)))
+
 (def write-file-sync (.-writeFileSync (node/require "fs")))
 (def read-file-sync (.-readFileSync (node/require "fs")))
 (def file-exists-sync (.-existsSync (node/require "fs")))
-(def file-read-stream (.-createReadStream (node/require "fs")))
-(def file-write-stream (.-createWriteStream (node/require "fs")))
 
 (def resolve-path (let [resolve (.-resolve (node/require "path"))]
                     (fn [path] (when (string? path) (resolve path)))))
@@ -31,5 +35,3 @@
 (def exec (.-exec (node/require "child_process")))
 
 (def sharp (node/require "sharp"))
-
-

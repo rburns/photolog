@@ -4,8 +4,8 @@
             [cognitect.transit :as transit]
             [photolog.process.node-deps :refer [resolve-path sharp write-file-sync
                                                 path-basename path-extension write-stdout
-                                                file-read-stream file-write-stream timestamps]]
-            [photolog.process.async :refer [stat-path read-dir exec]]
+                                                timestamps file-exists-error?]]
+            [photolog.process.async :refer [stat-path read-dir exec link-path]]
             [photolog.process.html :refer [write-html!]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
@@ -35,9 +35,9 @@
        (when label (str "-" (name label)))
        (path-extension source-path)))
 
-; (defn output-path
-;   [output-dir source-path label]
-;   (str output-dir "/" (output-file source-path label)))
+(defn output-path
+  [output-dir source-path label]
+  (str output-dir "/" (output-file source-path label)))
 
 ; (defn resize
 ;   ""
@@ -58,10 +58,15 @@
 ;   (doseq [breakpoint breakpoints] (resize (:file photo) output-dir breakpoint))
 ;   photo)
 
-; (defn copy-original!
-;   [output-dir photo]
-;   (.pipe (file-read-stream (:file photo))
-;          (file-write-stream (output-path output-dir (:file photo) nil))))
+(defn link-original!
+  [output-dir photo]
+  (go
+    (let [result (<! (link-path (:file photo) (output-path output-dir (:file photo) nil)))]
+      photo
+      (cond
+        (file-exists-error? (:error result)) (assoc photo :info "Skipped linking existing file")
+        (some? (:error result)) (assoc photo :error (:error result))
+        :else photo))))
 
 (defn sizes-element
   ""
@@ -164,7 +169,7 @@
         (map (partial as-photo (:img-src-dir config)))
         (map with-timestamps)
         ; (map (step (partial resize-with-breakpoints! (:breakpoints config) (:img-out-dir config))))
-        ; (map (step (partial copy-original! (:img-out-dir config)))
+        (map (step (partial link-original! (:img-out-dir config))))
         (map (step (partial with-sizes (:href-prefix config) (:breakpoints config))))
         (map (step (partial with-srcset (:href-prefix config) (:breakpoints config))))
         (map (step (partial with-exif (:exif-cache config) (:exif-props config))))
