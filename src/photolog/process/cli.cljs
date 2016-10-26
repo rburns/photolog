@@ -17,7 +17,9 @@
         (pprint  config)
         (go (let [summary (<! (process config))]
               (println "\nComplete.\n")
-              (println (str "photos: " (:count summary)))))))
+              (println (str "photos: " (+ (:count summary) (count (:errors summary)))))
+              (println (str "success: " (:count summary)))
+              (println (str "error: " (count (:errors summary))))))))
     (println "Please provide a config file.")))
 
 (enable-console-print!)

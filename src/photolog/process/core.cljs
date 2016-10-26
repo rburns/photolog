@@ -187,18 +187,26 @@
       (onto-chan return files)
       return)))
 
+(defn error-photo
+ ""
+ [photo]
+ (cond
+   (some? (:error photo)) :errors
+   :else :photos))
+
 (defn process
   ""
   [config]
   (go
     (let [photos-ch (<! (process-dir (:img-src-dir config) (photo-processor config)))
-          photos    (loop [photo-ch (<! photos-ch)
-                           accum    []]
-                      (if (some? photo-ch)
-                        (recur (<! photos-ch) (conj accum (<! photo-ch)))
-                        accum))]
+          result    (group-by error-photo (loop [photo-ch (<! photos-ch)
+                                                 accum    []]
+                                            (if (some? photo-ch)
+                                              (recur (<! photos-ch) (conj accum (<! photo-ch)))
+                                              accum)))]
       (write-output! (:metadata-format config)
                      (:metadata-path config)
-                     photos
+                     (:photos result)
                      (:html-tmpl config))
-      {:count (count photos)})))
+      {:count (count (:photos result))
+       :errors (:errors result)})))
