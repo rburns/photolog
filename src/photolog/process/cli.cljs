@@ -15,7 +15,6 @@
       (when config
         (println "\nUsing config:\n")
         (pprint  config)
-        (process config)
         (go (let [summary (<! (process config))]
               (println "\nComplete.\n")
               (println (str "photos: " (:count summary)))))))
