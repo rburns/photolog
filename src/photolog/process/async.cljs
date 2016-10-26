@@ -1,6 +1,6 @@
 (ns photolog.process.async
   (:require [cljs.core.async :as async :refer [chan >! close!]]
-            [photolog.process.node-deps :as cb])
+            [photolog.process.platform-node :as cb])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn ->single-value-chan

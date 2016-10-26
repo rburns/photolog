@@ -3,7 +3,7 @@
             [cljs.core.async :as async :refer [<!]]
             [photolog.process.core :refer [process]]
             [photolog.process.config :refer [config-with-defaults defaults]]
-            [photolog.process.node-deps :refer [resolve-path process-argv]])
+            [photolog.process.platform-node :refer [resolve-path process-argv]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn- main

@@ -1,6 +1,6 @@
 (ns photolog.process.html
   (:require [clojure.string :refer [replace join split]]
-            [photolog.process.node-deps :refer [read-file-sync write-file-sync path-basename]]))
+            [photolog.process.platform-node :refer [read-file-sync write-file-sync path-basename]]))
 
 (defn as-html-image
   [image]

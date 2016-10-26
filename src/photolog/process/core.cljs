@@ -2,9 +2,9 @@
   (:require [clojure.string :refer [join]]
             [cljs.core.async :as async :refer [chan onto-chan <!]]
             [cognitect.transit :as transit]
-            [photolog.process.node-deps :refer [resolve-path sharp write-file-sync
-                                                path-basename path-extension write-stdout
-                                                timestamps file-exists-error?]]
+            [photolog.process.platform-node :refer [resolve-path sharp write-file-sync
+                                                    path-basename path-extension write-stdout
+                                                    timestamps file-exists-error?]]
             [photolog.process.async :refer [stat-path read-dir exec link-path]]
             [photolog.process.html :refer [write-html!]])
   (:require-macros [cljs.core.async.macros :refer [go]]))

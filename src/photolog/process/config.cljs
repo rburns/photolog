@@ -1,6 +1,6 @@
 (ns photolog.process.config
-  (:require [photolog.process.node-deps :refer [resolve-path file-exists-sync read-file-sync
-                                                path-dirname path-basename]]))
+  (:require [photolog.process.platform-node :refer [resolve-path file-exists-sync read-file-sync
+                                                    path-dirname path-basename]]))
 
 (def defaults
   ""

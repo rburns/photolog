@@ -1,4 +1,4 @@
-(ns photolog.process.node-deps
+(ns photolog.process.platform-node
   (:require [cljs.nodejs :as node]))
 
 (def stat-path (.-stat (node/require "fs")))
@@ -31,7 +31,6 @@
 (def write-stdout (let [stdout (.-stdout (node/require "process"))]
                     (fn [output] (.write stdout output))))
 
-(def exec-sync (.-execSync (node/require "child_process")))
 (def exec (.-exec (node/require "child_process")))
 
 (def sharp (node/require "sharp"))
