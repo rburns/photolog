@@ -11,7 +11,7 @@
 (defn image?
   ""
   [filename]
-  (some? filename))
+  (contains? #{".jpg" ".jpeg" ".png" ".tif" ".tiff"} (.toLowerCase (path-extension filename))))
 
 (defn as-photo
   ""
