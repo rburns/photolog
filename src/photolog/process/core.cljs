@@ -4,7 +4,7 @@
             [photolog.process.platform-node :refer [resolve-path sharp write-file-sync stat-path
                                                     path-basename path-extension write-stdout exec
                                                     timestamps file-exists-error? link-path
-                                                    read-dir]]
+                                                    read-dir resize]]
             [photolog.process.output :refer [write-output!]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
@@ -38,24 +38,15 @@
   [output-dir source-path label]
   (str output-dir "/" (output-file source-path label)))
 
-; (defn resize
-;   ""
-;   [source-path output-dir breakpoint]
-;   (let [label        (first breakpoint)
-;         width        (.floor js/Math (last breakpoint))]
-;     (try
-;       (-> (sharp source-path)
-;           (.resize width nil)
-;           (.quality 95)
-;           (.withoutChromaSubsampling)
-;           (.toFile (output-path output-dir source-path label) print-feedback))
-;       (catch :default error (print-feedback error nil)))))
-
-; (defn resize-with-breakpoints!
-;   ""
-;   [breakpoints output-dir photo]
-;   (doseq [breakpoint breakpoints] (resize (:file photo) output-dir breakpoint))
-;   photo)
+(defn resize-with-breakpoints!
+  ""
+  [breakpoints output-dir photo]
+  (go
+   (doseq [breakpoint breakpoints]
+     (let [destination (output-path output-dir (:file photo) (first breakpoint))
+           result      (<! (resize (:file photo) destination breakpoint))]
+       (when (some? (:error result)) (assoc photo :error (:error result)))))
+   photo))
 
 (defn link-original!
   [output-dir photo]
@@ -166,7 +157,7 @@
   (comp (filter image?)
         (map (partial as-photo (:img-src-dir config)))
         (map with-timestamps)
-        ; (map (step (partial resize-with-breakpoints! (:breakpoints config) (:img-out-dir config))))
+        (map (step (partial resize-with-breakpoints! (:breakpoints config) (:img-out-dir config))))
         (map (step (partial link-original! (:img-out-dir config))))
         (map (step (partial with-sizes (:href-prefix config) (:breakpoints config))))
         (map (step (partial with-srcset (:href-prefix config) (:breakpoints config))))

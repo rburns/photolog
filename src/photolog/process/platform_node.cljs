@@ -18,8 +18,6 @@
 (def write-stdout (let [stdout (.-stdout (node/require "process"))]
                     (fn [output] (.write stdout output))))
 
-(def sharp (node/require "sharp"))
-
 (defn ->single-value-chan
   ""
   [async-fn]
@@ -51,3 +49,19 @@
   [err]
   (= "EEXIST" (.-code err)))
 
+(def sharp (node/require "sharp"))
+
+(defn sharp-resize
+  ""
+  [source-path output-path breakpoint next]
+  (let [label        (first breakpoint)
+        width        (.floor js/Math (last breakpoint))]
+    (try
+      (-> (sharp source-path)
+          (.resize width nil)
+          (.quality 95)
+          (.withoutChromaSubsampling)
+          (.toFile output-path next))
+      (catch :default error (next error nil)))))
+
+(def resize (->single-value-chan sharp-resize))
