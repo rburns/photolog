@@ -61,7 +61,6 @@
   [output-dir photo]
   (go
     (let [result (<! (link-path (:file photo) (output-path output-dir (:file photo) nil)))]
-      photo
       (cond
         (file-exists-error? (:error result)) (assoc photo :info "Skipped linking existing file")
         (some? (:error result)) (assoc photo :error (:error result))
