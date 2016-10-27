@@ -47,7 +47,7 @@
 
 (defn file-exists-error?
   [err]
-  (= "EEXIST" (.-code err)))
+  (and (some? err) (= "EEXIST" (.-code err))))
 
 (def sharp (node/require "sharp"))
 
