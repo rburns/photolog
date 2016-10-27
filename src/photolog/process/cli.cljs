@@ -19,7 +19,10 @@
               (println "\nComplete.\n")
               (println (str "photos: " (+ (:count summary) (count (:errors summary)))))
               (println (str "success: " (:count summary)))
-              (println (str "error: " (count (:errors summary))))))))
+              (println (str "error: " (count (:errors summary)) "\n"))
+              (doseq [e (:errors summary)]
+                (println (str (:file e) ":\n"))
+                (.log js/console "--" (.toString (:error e))))))))
     (println "Please provide a config file.")))
 
 (enable-console-print!)
