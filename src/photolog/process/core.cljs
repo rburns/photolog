@@ -212,4 +212,6 @@
       (write-metadata-cache! (:img-src-dir config)
                              (generate-metadata-cache (:photos result) timestamp))
       {:count (count (:photos result))
+       :cached-metadata (count (filter :cached-metadata (:photos result)))
+       :fresh (filter #(nil? (:cached-metadata %)) (:photos result))
        :errors (:errors result)})))
