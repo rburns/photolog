@@ -1,9 +1,11 @@
 (ns photolog.process.core
   (:require [clojure.string :refer [join]]
             [cljs.core.async :as async :refer [chan onto-chan <!]]
-            [photolog.process.platform-node :refer [stat-path path-basename path-extension  exec
+            [photolog.process.platform-node :refer [stat-path path-basename path-extension exec
                                                     timestamps file-exists-error? link-path
-                                                    read-dir resize]]
+                                                    read-dir resize timestamp-now]]
+            [photolog.process.metadata-cache :refer [metadata-cache generate-metadata-cache
+                                                     write-metadata-cache!]]
             [photolog.process.output :refer [write-output!]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
@@ -25,6 +27,12 @@
       (if (some? (:error stat))
         (assoc photo :error (:error stat))
         (merge photo (timestamps stat))))))
+
+(defn with-cached-metadata
+  [cache photo]
+  (if-let [cached (cache (:file photo) (:file_modified photo))]
+    (merge photo (assoc cached :cached-metadata true))
+    photo))
 
 (defn output-file
   ""
@@ -88,7 +96,7 @@
 
 (defn with-exif
   ""
-  [cache props photo]
+  [props photo]
   (go
     (let [props     (join " " (map #(str "-" %) props))
           exiftool  (str "exiftool -j " props " " (:file photo))
@@ -147,8 +155,9 @@
     (fn [ch]
       (go
         (let [arg (<! ch)]
-          (if (some? (:error arg)) arg (let [return (s arg)]
-                                         (if (chan? return) (<! return) return))))))))
+          (if (or (some? (:error arg)) (:metadata-cached arg))
+            arg
+            (let [return (s arg)] (if (chan? return) (<! return) return))))))))
 
 (defn photo-processor
   ""
@@ -158,9 +167,10 @@
         (map with-timestamps)
         (map (step (partial resize-with-breakpoints! (:breakpoints config) (:img-out-dir config))))
         (map (step (partial link-original! (:img-out-dir config))))
+        (map (step (partial with-cached-metadata (:metadata-cache config))))
         (map (step (partial with-sizes (:href-prefix config) (:breakpoints config))))
         (map (step (partial with-srcset (:href-prefix config) (:breakpoints config))))
-        (map (step (partial with-exif (:exif-cache config) (:exif-props config))))
+        (map (step (partial with-exif (:exif-props config))))
         (map (step with-transformed-exif-keys))
         (map (step (partial with-transformed-exif-values (:custom-exif-transforms config))))
         (map (step with-placeholders))
@@ -187,7 +197,9 @@
   ""
   [config]
   (go
-    (let [photos-ch (<! (process-dir (:img-src-dir config) (photo-processor config)))
+    (let [timestamp (timestamp-now)
+          config    (assoc config :metadata-cache (metadata-cache (:img-src-dir config)))
+          photos-ch (<! (process-dir (:img-src-dir config) (photo-processor config)))
           result    (group-by error-photo (loop [photo-ch (<! photos-ch)
                                                  accum    []]
                                             (if (some? photo-ch)
@@ -197,5 +209,7 @@
                      (:metadata-path config)
                      (:photos result)
                      (:html-tmpl config))
+      (write-metadata-cache! (:img-src-dir config)
+                             (generate-metadata-cache (:photos result) timestamp))
       {:count (count (:photos result))
        :errors (:errors result)})))

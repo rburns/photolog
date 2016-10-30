@@ -3,6 +3,8 @@
             [cljs.core.async :as async :refer [chan <! close!]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
+(defn timestamp-now [] (.now js/Date))
+
 (def write-file-sync (.-writeFileSync (node/require "fs")))
 (def read-file-sync (.-readFileSync (node/require "fs")))
 (def file-exists-sync (.-existsSync (node/require "fs")))
