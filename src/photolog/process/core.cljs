@@ -1,8 +1,7 @@
 (ns photolog.process.core
   (:require [clojure.string :refer [join]]
             [cljs.core.async :as async :refer [chan onto-chan <!]]
-            [photolog.process.platform-node :refer [resolve-path sharp write-file-sync stat-path
-                                                    path-basename path-extension write-stdout exec
+            [photolog.process.platform-node :refer [stat-path path-basename path-extension  exec
                                                     timestamps file-exists-error? link-path
                                                     read-dir resize]]
             [photolog.process.output :refer [write-output!]])
