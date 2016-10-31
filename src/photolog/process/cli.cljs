@@ -13,7 +13,8 @@
   (println (str "metadata: " (:cached-metadata summary) " cached, " (count (:fresh summary)) " new"))
   (when (> (count (:fresh summary)) 0)
     (println "")
-    (doseq [p (:fresh summary)] (println (:file p))))
+    (doseq [p (:fresh summary)] (println (:file p)))
+    (println ""))
   (println (str "errors: " (count (:errors summary)) "\n"))
   (doseq [e (:errors summary)]
     (println (str (:file e) ":\n"))
@@ -27,7 +28,7 @@
           config      (config-with-defaults config-path defaults println)]
       (when config
         (println "\nUsing config:\n")
-        (pprint  config)
+        (pprint config)
         (set-env "VIPS_WARNING" 0)
         (go (print-summary (<! (process config))))))
     (println "Please provide a config file.")))

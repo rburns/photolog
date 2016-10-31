@@ -2,7 +2,7 @@
   (:require [clojure.string :refer [join]]
             [cljs.core.async :as async :refer [chan onto-chan <!]]
             [photolog.process.platform-node :refer [stat-path path-basename path-extension exec
-                                                    timestamps file-exists-error? link-path
+                                                    timestamps file-exists-error? symlink-path
                                                     read-dir resize timestamp-now]]
             [photolog.process.metadata-cache :refer [metadata-cache generate-metadata-cache
                                                      write-metadata-cache!]]
@@ -58,7 +58,7 @@
 (defn link-original!
   [output-dir photo]
   (go
-    (let [result (<! (link-path (:file photo) (output-path output-dir (:file photo) nil)))]
+    (let [result (<! (symlink-path (:file photo) (output-path output-dir (:file photo) nil)))]
       (cond
         (file-exists-error? (:error result)) (assoc photo :info "Skipped linking existing file")
         (some? (:error result)) (assoc photo :error (:error result))

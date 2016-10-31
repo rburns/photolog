@@ -43,7 +43,7 @@
 
 (def exec (->single-value-chan (.-exec (node/require "child_process"))))
 
-(def link-path (->single-value-chan (.-link (node/require "fs"))))
+(def symlink-path (->single-value-chan (.-symlink (node/require "fs"))))
 
 (defn timestamps
   [stat]
