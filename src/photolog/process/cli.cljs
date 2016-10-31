@@ -6,6 +6,19 @@
             [photolog.process.platform-node :refer [resolve-path process-argv]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
+(defn- print-summary
+  [summary]
+  (println "\nComplete.\n")
+  (println (str "processed: " (:count summary) "/" (+ (:count smmary) (count (:errors summary)))))
+  (println (str "metadata: " (:cached-metadata summary) " cached, " (count (:fresh summary)) " new"))
+  (when (> (count (:fresh summary)) 0)
+    (println "")
+    (doseq [p (:fresh summary)] (println (:file p))))
+  (println (str "\nerrors: " (count (:errors summary)) "\n"))
+  (doseq [e (:errors summary)]
+    (println (str (:file e) ":\n"))
+    (.log js/console "--" (.toString (:error e)))))
+
 (defn- main
   ""
   []
@@ -15,18 +28,7 @@
       (when config
         (println "\nUsing config:\n")
         (pprint  config)
-        (go (let [summary (<! (process config))]
-              (println "\nComplete.\n")
-              (println (str "photos: " (+ (:count summary) (count (:errors summary)))))
-              (println (str "processed: " (:count summary)))
-              (println (str "cached metadata: " (:cached-metadata summary)))
-              (when (> (count (:fresh summary)) 0)
-                (println "\nfresh metadata:")
-                (doseq [p (:fresh summary)] (println (:file p))))
-              (println (str "\nerrors: " (count (:errors summary)) "\n"))
-              (doseq [e (:errors summary)]
-                (println (str (:file e) ":\n"))
-                (.log js/console "--" (.toString (:error e))))))))
+        (go (print-summary (<! (process config))))))
     (println "Please provide a config file.")))
 
 (enable-console-print!)
