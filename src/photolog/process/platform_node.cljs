@@ -16,6 +16,9 @@
 (def path-basename (let [basename (.-basename (node/require "path"))]
                      (fn [path] (basename path (path-extension path)))))
 
+(def set-env (let [env (.-env (node/require "process"))]
+               (fn [env-var env-var-val] (aset env env-var env-var-val))))
+
 (def process-argv (.-argv (node/require "process")))
 (def write-stdout (let [stdout (.-stdout (node/require "process"))]
                     (fn [output] (.write stdout output))))

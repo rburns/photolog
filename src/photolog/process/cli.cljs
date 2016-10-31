@@ -3,18 +3,18 @@
             [cljs.core.async :as async :refer [<!]]
             [photolog.process.core :refer [process]]
             [photolog.process.config :refer [config-with-defaults defaults]]
-            [photolog.process.platform-node :refer [resolve-path process-argv]])
+            [photolog.process.platform-node :refer [resolve-path process-argv set-env]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn- print-summary
   [summary]
-  (println "\nComplete.\n")
-  (println (str "processed: " (:count summary) "/" (+ (:count smmary) (count (:errors summary)))))
+  (println "Complete.\n")
+  (println (str "processed: " (:count summary) "/" (+ (:count summary) (count (:errors summary)))))
   (println (str "metadata: " (:cached-metadata summary) " cached, " (count (:fresh summary)) " new"))
   (when (> (count (:fresh summary)) 0)
     (println "")
     (doseq [p (:fresh summary)] (println (:file p))))
-  (println (str "\nerrors: " (count (:errors summary)) "\n"))
+  (println (str "errors: " (count (:errors summary)) "\n"))
   (doseq [e (:errors summary)]
     (println (str (:file e) ":\n"))
     (.log js/console "--" (.toString (:error e)))))
@@ -28,6 +28,7 @@
       (when config
         (println "\nUsing config:\n")
         (pprint  config)
+        (set-env "VIPS_WARNING" 0)
         (go (print-summary (<! (process config))))))
     (println "Please provide a config file.")))
 
