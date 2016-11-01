@@ -8,8 +8,11 @@
 
 (defn- print-summary
   [summary]
-  (println "Complete.\n")
-  (println (str "processed: " (:count summary) "/" (+ (:count summary) (count (:errors summary)))))
+  (println (if (:wrote-metadata summary) "Successfully wrote metadata"
+                                         "Failed to write metadata"))
+  (println (if (:wrote-metadata-cache summary) "Successfully wrote metadata cache"
+                                               "Failed to write metadata cache"))
+  (println (str "\nprocessed: " (:count summary) "/" (+ (:count summary) (count (:errors summary)))))
   (println (str "metadata: " (:cached-metadata summary) " cached, " (count (:fresh summary)) " new"))
   (when (> (count (:fresh summary)) 0)
     (println "")

@@ -2,7 +2,7 @@
   (:require [cljs.core.async :as async :refer [chan <!]]
             [cognitect.transit :as transit]
             [photolog.process.platform-node :refer [file-exists-sync read-file-sync path-basename
-                                                    path-extension write-file-sync]])
+                                                    path-extension write-file]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (def metadata-cache-filename ".photolog-metadata.cache")
@@ -39,5 +39,5 @@
 
 (defn write-metadata-cache!
   [cache-dir data]
-  (write-file-sync (str cache-dir "/" metadata-cache-filename)
-                   (transit/write (transit/writer :json) data)))
+  (write-file (str cache-dir "/" metadata-cache-filename)
+              (transit/write (transit/writer :json) data)))

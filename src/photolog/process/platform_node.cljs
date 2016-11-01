@@ -45,6 +45,8 @@
 
 (def symlink-path (->single-value-chan (.-symlink (node/require "fs"))))
 
+(def write-file (->single-value-chan (.-writeFile (node/require "fs"))))
+
 (defn timestamps
   [stat]
   {:file-created (.getTime (.-birthtime stat))

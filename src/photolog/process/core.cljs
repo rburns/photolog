@@ -6,7 +6,7 @@
                                                     read-dir resize timestamp-now]]
             [photolog.process.metadata-cache :refer [metadata-cache generate-metadata-cache
                                                      write-metadata-cache!]]
-            [photolog.process.output :refer [write-output!]])
+            [photolog.process.output :refer [write-metadata!]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn image?
@@ -205,13 +205,16 @@
                                             (if (some? photo-ch)
                                               (recur (<! photos-ch) (conj accum (<! photo-ch)))
                                               accum)))]
-      (write-output! (:metadata-format config)
-                     (:metadata-path config)
-                     (:photos result)
-                     (:html-tmpl config))
-      (write-metadata-cache! (:img-src-dir config)
-                             (generate-metadata-cache (:photos result) timestamp))
-      {:count (count (:photos result))
-       :cached-metadata (count (filter :cached-metadata (:photos result)))
-       :fresh (filter #(nil? (:cached-metadata %)) (:photos result))
-       :errors (:errors result)})))
+      (let [metadata (<! (write-metadata! (:metadata-format config)
+                                          (:metadata-path config)
+                                          (:photos result)
+                                          (:html-tmpl config)))
+            metadata-cache (<! (write-metadata-cache! (:img-src-dir config)
+                                                      (generate-metadata-cache (:photos result)
+                                                                               timestamp)))]
+        {:wrote-metadata (nil? (:error metadata))
+         :wrote-metadata-cache (nil? (:error metadata-cache))
+         :count (count (:photos result))
+         :cached-metadata (count (filter :cached-metadata (:photos result)))
+         :fresh (filter #(nil? (:cached-metadata %)) (:photos result))
+         :errors (:errors result)}))))
