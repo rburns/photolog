@@ -30,9 +30,9 @@
     (let [config-path (resolve-path (last process-argv))
           config      (config-with-defaults config-path defaults println)]
       (when config
-        (println "\nUsing config:\n")
-        (pprint config)
         (set-env "VIPS_WARNING" 0)
+        (println "\nUsing config:\n")
+        (pprint (dissoc config :metadata-cache))
         (go (print-summary (<! (process config))))))
     (println "Please provide a config file.")))
 

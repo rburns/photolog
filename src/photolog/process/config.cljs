@@ -1,6 +1,7 @@
 (ns photolog.process.config
   (:require [photolog.process.platform-node :refer [resolve-path file-exists-sync read-file-sync
-                                                    path-dirname path-basename]]))
+                                                    path-dirname path-basename]]
+            [photolog.process.metadata-cache :refer [metadata-cache]]))
 
 (def defaults
   ""
@@ -71,6 +72,13 @@
     (handle-error error-fn "href-prefix must be specified")
     :else config))
 
+(defn with-metadata-cache
+  ""
+  [config error-fn]
+  (cond
+    (nil? config) nil
+    :else (assoc config :metadata-cache (metadata-cache (:img-src-dir config)))))
+
 (defn config-with-defaults
   ""
   [config-path default-config error-fn]
@@ -78,5 +86,6 @@
     (-> (read-file-sync config-path)
         (parsed-config error-fn)
         (merged-config default-config)
-        (valid-config error-fn))
+        (valid-config error-fn)
+        (with-metadata-cache error-fn))
     (handle-error error-fn (str config-path " does not exist."))))
