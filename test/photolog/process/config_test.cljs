@@ -31,4 +31,4 @@
   (is (every? keyword? (map first (:breakpoints (c/parsed-config sample-config #()))))))
 
 (deftest parsed-config-adds-no-keys
-  (is (= 4 (count (keys (c/parsed-config minimal-config))))))
+  (is (= 4 (count (keys (c/parsed-config minimal-config #()))))))

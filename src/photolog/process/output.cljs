@@ -1,6 +1,12 @@
-(ns photolog.process.html
+(ns photolog.process.output
   (:require [clojure.string :refer [replace join split]]
-            [photolog.process.node-deps :refer [read-file-sync write-file-sync path-basename]]))
+            [cognitect.transit :as transit]
+            [photolog.process.platform-node :refer [read-file-sync write-file path-basename]]))
+
+(defn ->transit
+  ""
+  [data]
+  (transit/write (transit/writer :json) data))
 
 (defn as-html-image
   [image]
@@ -21,7 +27,14 @@
          "/>"
        "</div>"))
 
-(defn write-html!
-  [path data template]
-  (let [template (read-file-sync template #js {"encoding" "utf-8"})]
-    (write-file-sync path (replace template "##PHOTOS##" (join (map as-html-image data))))))
+(defn ->html
+  [data template]
+  (replace (read-file-sync template #js {"encoding" "utf-8"})
+           "##PHOTOS##"
+           (join (map as-html-image data))))
+
+(defn write-metadata!
+  [format path data template]
+  (write-file path (condp = format
+                    :transit (->transit data)
+                    :html   (->html data template))))
