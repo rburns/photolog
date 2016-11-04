@@ -7,7 +7,7 @@
 
 (def metadata-cache-filename ".photolog-metadata.cache")
 
-(defn gen-key
+(defn metadata-cache-key
   ""
   [filename]
   (str (path-basename filename) (path-extension filename)))
@@ -20,7 +20,7 @@
                       (transit/read (transit/reader :json) (read-file-sync cache-path))
                       {})]
     (fn [filename modified]
-      (let [cache-key (gen-key filename)
+      (let [cache-key (metadata-cache-key filename)
             cached (get cache-store cache-key)]
         (if (and (some? cached) (<= modified (:metadata_cached cached)))
           cached
@@ -30,7 +30,7 @@
   [photos timestamp]
   (reduce (fn [cache photo]
             (assoc cache
-                   (gen-key (:file photo))
+                   (metadata-cache-key (:file photo))
                    (-> photo
                        (assoc :metadata-cached (or (:metadata-cached photo) timestamp))
                        (dissoc :file :cached-metadata))))
