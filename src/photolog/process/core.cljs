@@ -3,7 +3,8 @@
             [cljs.core.async :as async :refer [chan onto-chan <!]]
             [photolog.process.platform-node :refer [stat-path path-basename path-extension exec
                                                     timestamps file-exists-error? symlink-path
-                                                    read-dir resize timestamp-now]]
+                                                    read-dir resize file-does-not-exist-error?
+                                                    timestamp-now]]
             [photolog.process.metadata-cache :refer [generate-metadata-cache write-metadata-cache!]]
             [photolog.process.output :refer [write-metadata!]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -44,13 +45,21 @@
   [output-dir source-path label]
   (str output-dir "/" (output-file source-path label)))
 
+(defn should-resize?
+  [photo destination]
+  (go
+    (let [stat (<! (stat-path destination))]
+      (or (file-does-not-exist-error? (:error stat))
+          (> (:file-modified photo) (:file-modified (timestamps stat)))))))
+
 (defn resize-with-breakpoints!
   ""
   [breakpoints output-dir photo]
   (go
    (doseq [breakpoint breakpoints]
      (let [destination (output-path output-dir (:file photo) (first breakpoint))
-           result      (<! (resize (:file photo) destination breakpoint))]
+           result      (when (<! (should-resize? photo destination))
+                         (<! (resize (:file photo) destination breakpoint)))]
        (when (some? (:error result)) (assoc photo :error (:error result)))))
    photo))
 

@@ -56,6 +56,10 @@
   [err]
   (and (some? err) (= "EEXIST" (.-code err))))
 
+(defn file-does-not-exist-error?
+  [err]
+  (and (some? err) (= "ENOENT" (.-code err))))
+
 (def sharp (node/require "sharp"))
 
 (defn sharp-resize
