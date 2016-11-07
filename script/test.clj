@@ -2,8 +2,8 @@
 
 (cljs.build.api/watch (cljs.build.api/inputs "src" "test")
                       {:main 'test-runner
-                       :output-to "target/test/main.js"
-                       :output-dir "target/test/out"
+                       :output-to "target/test.js"
+                       :output-dir "target/out"
                        :target :nodejs
                        :optimizations :none
                        :parallel-build true

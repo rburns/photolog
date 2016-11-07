@@ -1,10 +1,11 @@
 {
   "scripts": {
+    "annotate-dev": "rlwrap lein run -m clojure.main script/process_dev.clj",
     "process-dev": "rlwrap lein run -m clojure.main script/process_dev.clj",
     "process-prod": "npm run clean && lein run -m clojure.main script/process_prod.clj",
-    "process-repl": "rlwrap lein run -m clojure.main script/process_repl.clj",
+    "repl": "rlwrap lein run -m clojure.main script/repl.clj",
     "test": "rlwrap lein run -m clojure.main script/test.clj",
-    "clean": "rm -rf process && rm -rf target"
+    "clean": "rm -rf target"
   },
   "dependencies": {
     "sharp": "^0.16.1"

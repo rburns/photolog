@@ -2,11 +2,11 @@
 (require 'cljs.build.api)
 (require 'cljs.repl.node)
 
-(cljs.build.api/build "src"
+(cljs.build.api/build "src/photolog"
   {:main 'photolog.process.core
-   :output-to "out/repl.js"
+   :output-to "target/repl.js"
    :verbose true})
 
 (cljs.repl/repl (cljs.repl.node/repl-env)
-  :watch "src"
-  :output-dir "out")
+  :watch "src/photolog"
+  :output-dir "target")

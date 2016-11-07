@@ -1,8 +1,8 @@
 (require 'cljs.build.api)
 
-(cljs.build.api/watch "src/photolog/process"
-                      {:main 'photolog.process.cli
-                       :output-to "target/process.js"
+(cljs.build.api/watch "src/photolog/annotate"
+                      {:main 'photolog.annotate.cli
+                       :output-to "target/annotate.js"
                        :output-dir "target/out"
                        :target :nodejs
                        :optimizations :none
