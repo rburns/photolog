@@ -1,4 +1,4 @@
-(ns photolog.process.platform-node
+(ns photolog.platform-node
   (:require [cljs.nodejs :as node]
             [cljs.core.async :as async :refer [chan <! close!]])
   (:require-macros [cljs.core.async.macros :refer [go]]))

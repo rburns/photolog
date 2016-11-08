@@ -1,8 +1,8 @@
 (ns photolog.process.metadata-cache
   (:require [cljs.core.async :as async :refer [chan <!]]
             [cognitect.transit :as transit]
-            [photolog.process.platform-node :refer [file-exists-sync read-file-sync path-basename
-                                                    path-extension write-file]])
+            [photolog.platform-node :refer [file-exists-sync read-file-sync path-basename
+                                            path-extension write-file]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (def metadata-cache-filename ".photolog-metadata.cache")

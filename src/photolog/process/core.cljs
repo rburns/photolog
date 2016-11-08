@@ -1,10 +1,9 @@
 (ns photolog.process.core
   (:require [clojure.string :refer [join]]
             [cljs.core.async :as async :refer [chan onto-chan <!]]
-            [photolog.process.platform-node :refer [stat-path path-basename path-extension exec
-                                                    timestamps file-exists-error? symlink-path
-                                                    read-dir resize file-does-not-exist-error?
-                                                    timestamp-now]]
+            [photolog.platform-node :refer [stat-path path-basename path-extension exec timestamps
+                                            file-exists-error? symlink-path read-dir resize
+                                            file-does-not-exist-error?  timestamp-now]]
             [photolog.process.metadata-cache :refer [generate-metadata-cache write-metadata-cache!]]
             [photolog.process.output :refer [write-metadata!]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
