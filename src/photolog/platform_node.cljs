@@ -19,7 +19,9 @@
 (def set-env (let [env (.-env (node/require "process"))]
                (fn [env-var env-var-val] (aset env env-var env-var-val))))
 
-(def process-argv (.-argv (node/require "process")))
+(def process-argv (let [argv (.-argv (node/require "process"))]
+                    (fn [] (js->clj argv))))
+
 (def write-stdout (let [stdout (.-stdout (node/require "process"))]
                     (fn [output] (.write stdout output))))
 

@@ -27,7 +27,7 @@
   ""
   []
   (if (>= (count process-argv) 3)
-    (let [config-path (resolve-path (last process-argv))
+    (let [config-path (resolve-path (last (process-argv)))
           config      (config-with-defaults config-path defaults println)]
       (when config
         (set-env "VIPS_WARNING" 0)
