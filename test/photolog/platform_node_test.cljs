@@ -1,7 +1,7 @@
-(ns photolog.process.platform-node-test
+(ns photolog.platform-node-test
   (:require [cljs.test :refer-macros [deftest is async testing]]
             [cljs.core.async :as async :refer [<!]]
-            [photolog.process.platform-node :as n])
+            [photolog.platform-node :as n])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (testing "->single-value-chan"
