@@ -57,20 +57,21 @@
 (defn valid-config
   ""
   [config error-fn]
-  (cond
-    (nil? config)
-    nil
-    (not (file-exists-sync (:img-src-dir config)))
-    (handle-error error-fn "img-src-dir must specify a valid directory path.")
-    (not (file-exists-sync (:img-out-dir config)))
-    (handle-error error-fn "img-out-dir must specify a valid directory path.")
-    (not (file-exists-sync (path-dirname (:metadata-path config))))
-    (handle-error error-fn "metadata-path must refer to a valid directory.")
-    (nil? (path-basename (:metadata-path config)))
-    (handle-error error-fn "metadata-path must include a file name.")
-    (nil? (:href-prefix config))
-    (handle-error error-fn "href-prefix must be specified")
-    :else config))
+  (let [error (partial handle-error error-fn)]
+    (cond
+      (nil? config)
+      nil
+      (not (file-exists-sync (:img-src-dir config)))
+      (error "img-src-dir must specify a valid directory path.")
+      (not (file-exists-sync (:img-out-dir config)))
+      (error "img-out-dir must specify a valid directory path.")
+      (not (file-exists-sync (path-dirname (:metadata-path config))))
+      (error "metadata-path must refer to a valid directory.")
+      (nil? (path-basename (:metadata-path config)))
+      (error "metadata-path must include a file name.")
+      (nil? (:href-prefix config))
+      (error "href-prefix must be specified")
+      :else config)))
 
 (defn with-metadata-cache
   ""
