@@ -26,7 +26,7 @@
 (defn- main
   ""
   []
-  (if (>= (count process-argv) 3)
+  (if (>= (count (process-argv) 3))
     (let [config-path (resolve-path (last (process-argv)))
           config      (config-with-defaults config-path defaults println)]
       (when config
