@@ -1,6 +1,6 @@
 (require 'cljs.build.api)
 
-(cljs.build.api/watch "src/photolog/process"
+(cljs.build.api/watch "src/photolog"
                       {:main 'photolog.process.cli
                        :output-to "target/process.js"
                        :output-dir "target/out"

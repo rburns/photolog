@@ -1,6 +1,6 @@
 (require 'cljs.build.api)
 
-(cljs.build.api/watch "src/photolog/annotate"
+(cljs.build.api/watch "src/photolog"
                       {:main 'photolog.annotate.cli
                        :output-to "target/annotate.js"
                        :output-dir "target/out"

@@ -1,12 +1,10 @@
 (require 'cljs.build.api)
 
 (cljs.build.api/build "src/photolog"
-                      {:main 'photolog.process.cli
-                       :output-to "target/process.js"
+                      {:main 'photolog.annotate.cli
+                       :output-to "target/annotate.js"
                        :output-dir "target/out"
                        :target :nodejs
-                       :static-fns true
                        :optimizations :simple
                        :parallel-build true
-                       :source-map "target/process.js.map"})
-
+                       :source-map "target/annotate.js.map"})
