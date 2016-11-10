@@ -7,7 +7,7 @@
   (cljs.build.api/watch "src/photolog"
                         {:main 'photolog.annotate.cli
                          :output-to "target/annotate.js"
-                         :output-dir "target/out"
+                         :output-dir "target/annotate"
                          :target :nodejs
                          :optimizations :none
                          :parallel-build true
@@ -17,7 +17,7 @@
   (cljs.build.api/watch "src/photolog"
                         {:main 'photolog.process.cli
                          :output-to "target/process.js"
-                         :output-dir "target/out"
+                         :output-dir "target/process"
                          :target :nodejs
                          :optimizations :none
                          :parallel-build true
@@ -27,7 +27,7 @@
   (cljs.build.api/watch (cljs.build.api/inputs "src" "test")
                         {:main 'test-runner
                          :output-to "target/test.js"
-                         :output-dir "target/out"
+                         :output-dir "target/test"
                          :target :nodejs
                          :optimizations :none
                          :parallel-build true
@@ -35,4 +35,4 @@
 
 (cljs.repl/repl (cljs.repl.node/repl-env)
                 :watch "src/photolog"
-                :output-dir "target")
+                :output-dir "target/repl")

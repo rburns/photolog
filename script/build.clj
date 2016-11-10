@@ -5,7 +5,7 @@
 (cljs.build.api/build "src/photolog"
                       {:main 'photolog.annotate.cli
                        :output-to "target/annotate.js"
-                       :output-dir "target/out"
+                       :output-dir "target/annotate"
                        :target :nodejs
                        :optimizations :simple
                        :parallel-build true
@@ -16,7 +16,7 @@
 (cljs.build.api/build "src/photolog"
                       {:main 'photolog.process.cli
                        :output-to "target/process.js"
-                       :output-dir "target/out"
+                       :output-dir "target/process"
                        :target :nodejs
                        :static-fns true
                        :optimizations :simple
@@ -28,7 +28,7 @@
 (cljs.build.api/build (cljs.build.api/inputs "src" "test")
                       {:main 'test-runner
                        :output-to "target/test.js"
-                       :output-dir "target/out"
+                       :output-dir "target/test"
                        :target :nodejs
                        :optimizations :simple
                        :parallel-build true
