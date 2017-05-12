@@ -1,7 +1,8 @@
 (ns photolog.process.output
   (:require [clojure.string :refer [replace join split]]
             [cognitect.transit :as transit]
-            [photolog.process.platform-node :refer [read-file-sync write-file path-basename]]))
+            [photolog.process.platform-node :refer [create-feed read-file-sync write-file
+                                                    path-basename]]))
 
 (defn ->transit
   ""
@@ -33,8 +34,14 @@
            "##PHOTOS##"
            (join (map as-html-image data))))
 
+(defn ->atom
+  [data]
+  (let [feed (create-feed {})]
+    (.atom1 feed)))
+
 (defn write-metadata!
   [format path data template]
   (write-file path (condp = format
                     :transit (->transit data)
-                    :html   (->html data template))))
+                    :html    (->html data template)
+                    :atom    (->atom data))))

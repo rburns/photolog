@@ -70,6 +70,8 @@
     (handle-error error-fn "metadata-path must include a file name.")
     (nil? (:href-prefix config))
     (handle-error error-fn "href-prefix must be specified")
+    (nil? (some #{(:metadata-format config)} '(:transit :html :atom)))
+    (handle-error error-fn "metadata-format must be transit, html or atom")
     :else config))
 
 (defn with-metadata-cache

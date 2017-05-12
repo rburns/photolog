@@ -76,3 +76,7 @@
       (catch :default error (next error nil)))))
 
 (def resize (->single-value-chan sharp-resize))
+
+(defn create-feed [description]
+  (let [Feed (node/require "feed")]
+    (Feed. (clj->js description))))
