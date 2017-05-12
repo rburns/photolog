@@ -80,3 +80,12 @@
 (defn create-feed [description]
   (let [Feed (node/require "feed")]
     (Feed. (clj->js description))))
+
+(defn feed-add-item [feed item] (.addItem feed (clj->js item)))
+
+(defn ->feed-date [date-time]
+  (let [date (-> date-time (.split " ") first (.split ":"))
+        time (-> date-time (.split " ") last (.split ":"))
+        args (map js/parseInt (concat date time))
+        arg  (partial nth args)]
+    (js/Date. (arg 0) (- (arg 1) 1) (arg 2) (arg 3) (arg 4) (arg 5))))
