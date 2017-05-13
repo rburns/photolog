@@ -32,3 +32,11 @@
 
 (deftest parsed-config-adds-no-keys
   (is (= 4 (count (keys (c/parsed-config minimal-config #()))))))
+
+(deftest resolve-href-prefix-absolute-path
+  (is (= "/foo/bar"
+         (c/resolve-href-prefix "/foo/bar"))))
+
+(deftest resolve-href-prefix-absolute-url
+  (is (= "http://foo/bar"
+         (c/resolve-href-prefix "http://foo/bar"))))

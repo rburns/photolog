@@ -1,5 +1,6 @@
 (ns photolog.process.config
-  (:require [photolog.process.platform-node :refer [resolve-path file-exists-sync read-file-sync
+  (:require [clojure.string :refer [starts-with?]]
+            [photolog.process.platform-node :refer [resolve-path file-exists-sync read-file-sync
                                                     path-dirname path-basename]]
             [photolog.process.metadata-cache :refer [metadata-cache]]))
 
@@ -31,13 +32,18 @@
     (:metadata-format config) (assoc :metadata-format (keyword (:metadata-format config)))
     (:breakpoints config) (assoc :breakpoints (with-keyword-names (:breakpoints config)))))
 
+(defn resolve-href-prefix
+  ""
+  [prefix]
+  (if (starts-with? prefix "http") prefix (resolve-path prefix)))
+
 (defn with-resolved-paths
   ""
   [config]
   (assoc config :img-src-dir (resolve-path (:img-src-dir config))
                 :img-out-dir (resolve-path (:img-out-dir config))
                 :metadata-path (resolve-path (:metadata-path config))
-                :href-prefix (resolve-path (:href-prefix config))))
+                :href-prefix (resolve-href-prefix (:href-prefix config))))
 
 (defn parsed-config
   ""

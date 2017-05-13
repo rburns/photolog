@@ -35,3 +35,11 @@
 (deftest many-applicable-transforms
   (is (= {:foo "b", :bar "d"}
          (p/with-transformed-exif-values [[:foo "a" "b"] [:bar "c" "d"]] {:foo "a", :bar "c"}))))
+
+(deftest with-href-absolute-path-prefix
+  (is (= "/foo/photo.jpg"
+         (:href (p/with-href "/foo" {:file "/on/disk/path/to/photo.jpg"})))))
+
+(deftest with-href-absoulte-url-prefix
+  (is (= "http://foo.com/images/photo.jpg"
+         (:href (p/with-href "http://foo.com/images" {:file "/on/disk/path/to/photo.jpg"})))))
