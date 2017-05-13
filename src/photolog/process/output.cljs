@@ -1,8 +1,8 @@
 (ns photolog.process.output
   (:require [clojure.string :refer [replace join split]]
             [cognitect.transit :as transit]
-            [photolog.process.platform-node :refer [create-feed read-file-sync write-file
-                                                    path-basename]]))
+            [photolog.process.platform-node :refer [read-file-sync write-file path-basename
+                                                    create-feed feed-add-item ->feed-date]]))
 
 (defn ->transit
   ""
@@ -37,6 +37,10 @@
 (defn ->atom
   [data]
   (let [feed (create-feed {})]
+    (doseq [image data]
+      (feed-add-item feed {:date (->feed-date (:created image))
+                           :link (:href image)
+                           :id (:href image)}))
     (.atom1 feed)))
 
 (defn write-metadata!
