@@ -10,6 +10,7 @@
   (transit/write (transit/writer :json) data))
 
 (defn as-html-image
+  ""
   [image]
   (str "<div class=\"photo\" id=\"" (first (split (path-basename (:file image)) ".")) "\">"
          "<img srcset=\"" (:srcset image) "\" "
@@ -29,21 +30,30 @@
        "</div>"))
 
 (defn ->html
+  ""
   [data template]
   (replace (read-file-sync template #js {"encoding" "utf-8"})
            "##PHOTOS##"
            (join (map as-html-image data))))
 
+(defn atom-item-content
+  ""
+  [image]
+  (str "<img src=\"" (-> image :sizes first :href) "\" />"))
+
 (defn ->atom
+  ""
   [data]
   (let [feed (create-feed {})]
     (doseq [image data]
       (feed-add-item feed {:date (->feed-date (:created image))
                            :link (:href image)
+                           :content (atom-item-content image)
                            :id (:href image)}))
     (.atom1 feed)))
 
 (defn write-metadata!
+  ""
   [format path data template]
   (write-file path (condp = format
                     :transit (->transit data)
