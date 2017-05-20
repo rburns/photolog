@@ -1,6 +1,10 @@
 # photolog
 visual journal. current status: resizes and generates metadata for a directory of images
 
+### dependencies
+
+[exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool/) - propbably available in your system's package manager
+
 ### building
 
 ```npm run process-prod```
