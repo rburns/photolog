@@ -19,10 +19,15 @@
                 (assoc output :params [(keyword input)])
                 (update-in output [:params] conj input))))
 
+(defn parsed-command
+  ""
+  [command-line]
+  (reduce command-parser {} (process-argv)))
+
 (defn- main
   ""
   []
-  (let [command (valid-command (reduce command-parser {} (process-argv)) println)]
+  (let [command (valid-command (parsed-command (process-argv)) println)]
     (println (if command command "Giving up."))))
 
 (enable-console-print!)
