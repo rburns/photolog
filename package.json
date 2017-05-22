@@ -1,12 +1,14 @@
 {
   "scripts": {
     "test": "node ./target/test.js",
-
     "build": "npm run clean && lein run -m clojure.main script/build.clj",
     "dev": "lein run -m clojure.main script/dev.clj",
     "clean": "rm -rf target"
   },
   "dependencies": {
     "sharp": "^0.16.1"
+  },
+  "devDependencies": {
+    "source-map-support": "^0.4.15"
   }
 }
