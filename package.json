@@ -6,7 +6,7 @@
     "clean": "rm -rf target"
   },
   "dependencies": {
-    "sharp": "^0.16.1"
+    "sharp": "^0.18.2"
   },
   "devDependencies": {
     "source-map-support": "^0.4.15"
