@@ -69,6 +69,7 @@
         width        (.floor js/Math (last breakpoint))]
     (try
       (-> (sharp source-path)
+          (.rotate nil)
           (.resize width nil)
           (.quality 95)
           (.withoutChromaSubsampling)
