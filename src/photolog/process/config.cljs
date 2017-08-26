@@ -11,7 +11,8 @@
    :metadata-path   nil,
    :href-prefix     nil,
    :exif-props      ["CreateDate" "ExposureTime" "ScaleFactor35efl" "FocalLength" "LensType"
-                     "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight"]
+                     "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight" "GPSPosition"
+                     "GPSAltitude"]
    :breakpoints     [[:tiny 200] [:small 556] [:medium 804] [:large 1000]]
    :metadata-format :transit})
 
