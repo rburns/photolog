@@ -20,6 +20,17 @@
     \"breakpoints\": [[\"tiny\", 100], [\"big\", 300]]
   }")
 
+(def exif-override-config
+  "{
+    \"img-src-dir\": \"/img/src/dir\",
+    \"img-out-dir\": \"/img/out/dir\",
+    \"metadata-path\": \"/path/to/metadata\",
+    \"exif-props\": [\"GPSPosition\", \"GPSAltitude\"],
+    \"href-prefix\": \"href_prefix\",
+    \"metadata-format\": \"transit\",
+    \"breakpoints\": [[\"tiny\", 100], [\"big\", 300]]
+  }")
+
 (deftest top-level-keys-are-keywords
   (is (every? keyword? (keys (c/parsed-config sample-config #())))))
 
@@ -40,3 +51,11 @@
 (deftest resolve-href-prefix-absolute-url
   (is (= "http://foo/bar"
          (c/resolve-href-prefix "http://foo/bar"))))
+
+(deftest default-exif-props
+  (is (= (:exif-props c/defaults)
+         (:exif-props (c/merged-config (c/parsed-config minimal-config) c/defaults)))))
+
+(deftest override-exif-props
+  (is (= ["GPSPosition" "GPSAltitude"]
+         (:exif-props (c/merged-config (c/parsed-config exif-override-config) c/defaults)))))
