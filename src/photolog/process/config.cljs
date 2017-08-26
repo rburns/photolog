@@ -11,7 +11,8 @@
    :metadata-path   nil,
    :href-prefix     nil,
    :exif-props      ["CreateDate" "ExposureTime" "ScaleFactor35efl" "FocalLength" "LensType"
-                     "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight"]
+                     "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight" "GPSPosition"
+                     "GPSAltitude"]
    :breakpoints     [[:tiny 200] [:small 556] [:medium 804] [:large 1000]]
    :metadata-format :transit})
 
@@ -89,11 +90,15 @@
 
 (defn config-with-defaults
   ""
+  [config default-config error-fn]
+  (-> config
+      (parsed-config error-fn)
+      (merged-config default-config)
+      (valid-config error-fn)
+      (with-metadata-cache error-fn)))
+
+(defn config-path-with-defaults
   [config-path default-config error-fn]
   (if (file-exists-sync config-path)
-    (-> (read-file-sync config-path)
-        (parsed-config error-fn)
-        (merged-config default-config)
-        (valid-config error-fn)
-        (with-metadata-cache error-fn))
+    (config-with-defaults (read-file-sync config-path) default-config error-fn)
     (handle-error error-fn (str config-path " does not exist."))))
