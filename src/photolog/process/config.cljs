@@ -89,11 +89,15 @@
 
 (defn config-with-defaults
   ""
+  [config default-config error-fn]
+  (-> config
+      (parsed-config error-fn)
+      (merged-config default-config)
+      (valid-config error-fn)
+      (with-metadata-cache error-fn)))
+
+(defn config-path-with-defaults
   [config-path default-config error-fn]
   (if (file-exists-sync config-path)
-    (-> (read-file-sync config-path)
-        (parsed-config error-fn)
-        (merged-config default-config)
-        (valid-config error-fn)
-        (with-metadata-cache error-fn))
+    (config-with-defaults (read-file-sync config-path) default-config error-fn)
     (handle-error error-fn (str config-path " does not exist."))))
