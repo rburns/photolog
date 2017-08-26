@@ -7,4 +7,4 @@ script: npm run ci && ./target/test/main.js
 addons:
   apt:
     packages:
-      - clojure
+      - clojure1.8
