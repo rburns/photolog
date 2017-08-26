@@ -2,7 +2,7 @@
   (:require [cljs.pprint :refer [pprint]]
             [cljs.core.async :as async :refer [<!]]
             [photolog.process.core :refer [process]]
-            [photolog.process.config :refer [config-with-defaults defaults]]
+            [photolog.process.config :refer [config-path-with-defaults defaults]]
             [photolog.platform-node :refer [resolve-path process-argv set-env]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
@@ -25,16 +25,16 @@
 
 (defn- main
   ""
-  []
+  [])
   (if (>= (count (process-argv) 3))
     (let [config-path (resolve-path (last (process-argv)))
-          config      (config-with-defaults config-path defaults println)]
+          config      (config-path-with-defaults config-path defaults println)]
       (when config
         (set-env "VIPS_WARNING" 0)
         (println "\nUsing config:\n")
         (pprint (dissoc config :metadata-cache))
         (go (print-summary (<! (process config))))))
-    (println "Please provide a config file.")))
+    (println "Please provide a config file."))
 
 (enable-console-print!)
 

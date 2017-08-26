@@ -3,9 +3,11 @@
     "test": "node ./target/test.js",
     "build": "npm run clean && lein run -m clojure.main script/build.clj",
     "dev": "lein run -m clojure.main script/dev.clj",
+    "ci": "lein run -m clojure.main script/ci.clj",
     "clean": "rm -rf target"
   },
   "dependencies": {
+    "feed": "^1.0.2",
     "sharp": "^0.18.2"
   },
   "devDependencies": {

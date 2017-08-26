@@ -1,5 +1,6 @@
 (ns photolog.process.config
-  (:require [photolog.platform-node :refer [resolve-path file-exists-sync read-file-sync
+  (:require [clojure.string :refer [starts-with?]]
+            [photolog.platform-node :refer [resolve-path file-exists-sync read-file-sync
                                             path-dirname path-basename]]
             [photolog.process.metadata-cache :refer [metadata-cache]]))
 
@@ -10,7 +11,8 @@
    :metadata-path   nil,
    :href-prefix     nil,
    :exif-props      ["CreateDate" "ExposureTime" "ScaleFactor35efl" "FocalLength" "LensType"
-                     "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight"]
+                     "Aperture" "ISO" "Model" "ImageWidth" "ImageHeight" "GPSPosition"
+                     "GPSAltitude"]
    :breakpoints     [[:tiny 200] [:small 556] [:medium 804] [:large 1000]]
    :metadata-format :transit})
 
@@ -31,13 +33,18 @@
     (:metadata-format config) (assoc :metadata-format (keyword (:metadata-format config)))
     (:breakpoints config) (assoc :breakpoints (with-keyword-names (:breakpoints config)))))
 
+(defn resolve-href-prefix
+  ""
+  [prefix]
+  (if (starts-with? prefix "http") prefix (resolve-path prefix)))
+
 (defn with-resolved-paths
   ""
   [config]
   (assoc config :img-src-dir (resolve-path (:img-src-dir config))
                 :img-out-dir (resolve-path (:img-out-dir config))
                 :metadata-path (resolve-path (:metadata-path config))
-                :href-prefix (resolve-path (:href-prefix config))))
+                :href-prefix (resolve-href-prefix (:href-prefix config))))
 
 (defn parsed-config
   ""
@@ -71,6 +78,8 @@
       (error "metadata-path must include a file name.")
       (nil? (:href-prefix config))
       (error "href-prefix must be specified")
+      (nil? (some #{(:metadata-format config)} '(:transit :html :atom)))
+      (error "metadata-format must be transit, html or atom")
       :else config)))
 
 (defn with-metadata-cache
@@ -82,11 +91,15 @@
 
 (defn config-with-defaults
   ""
+  [config default-config error-fn]
+  (-> config
+      (parsed-config error-fn)
+      (merged-config default-config)
+      (valid-config error-fn)
+      (with-metadata-cache error-fn)))
+
+(defn config-path-with-defaults
   [config-path default-config error-fn]
   (if (file-exists-sync config-path)
-    (-> (read-file-sync config-path)
-        (parsed-config error-fn)
-        (merged-config default-config)
-        (valid-config error-fn)
-        (with-metadata-cache error-fn))
+    (config-with-defaults (read-file-sync config-path) default-config error-fn)
     (handle-error error-fn (str config-path " does not exist."))))

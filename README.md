@@ -35,13 +35,15 @@ it's JSON
 
 `exif-props` a list of exif properites to include in the output metadata
 
-the default properties are _CreateDate, ExposureTime, ScaleFactor35efl, FocalLength, LensType, Aperture, ISO, Model, ImageWidth, and ImageHeight_
+the default properties are _CreateDate, ExposureTime, ScaleFactor35efl, FocalLength, LensType,
+Aperture, ISO, Model, GPSPosition, GPSAltitude, ImageWidth, and ImageHeight_. Prop names are those
+used by exiftool.
 
 `breakpoints` the breakpoints for resized images
 
 an array of name, width pairs. the default breakpoints are _[["tiny", 200], ["small", 556], ["medium", 804], ["large", 1000]]_
 
-`metadata-format` the format of the output metadata. _transit_, or _html_. defaults to transit
+`metadata-format` the format of the output metadata. _transit_, _html_, or _atom_. defaults to transit
 
 `html-tmpl` the path of the template to be used for html output.
 

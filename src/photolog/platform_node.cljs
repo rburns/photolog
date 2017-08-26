@@ -71,6 +71,7 @@
         width        (.floor js/Math (last breakpoint))]
     (try
       (-> (sharp source-path)
+          (.rotate nil)
           (.resize width nil)
           (.quality 95)
           (.withoutChromaSubsampling)
@@ -78,3 +79,16 @@
       (catch :default error (next error nil)))))
 
 (def resize (->single-value-chan sharp-resize))
+
+(defn create-feed [description]
+  (let [Feed (node/require "feed")]
+    (Feed. (clj->js description))))
+
+(defn feed-add-item [feed item] (.addItem feed (clj->js item)))
+
+(defn ->feed-date [date-time]
+  (let [date (-> date-time (.split " ") first (.split ":"))
+        time (-> date-time (.split " ") last (.split ":"))
+        args (map js/parseInt (concat date time))
+        arg  (partial nth args)]
+    (js/Date. (arg 0) (- (arg 1) 1) (arg 2) (arg 3) (arg 4) (arg 5))))
