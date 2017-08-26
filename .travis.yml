@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - 7
   - 6
-script: npm run ci && node ./target/test/main.js
+script: npm run build && npm test
 addons:
   apt:
     sources:
