@@ -6,5 +6,8 @@ node_js:
 script: npm run ci && ./target/test/main.js
 addons:
   apt:
+    sources:
+      - sourceline: deb http://ppa.launchpad.net/mikegedelman/leiningen-git-stable/ubuntu trusty main
+        key_url: http://keyserver.ubuntu.com:11371/pks/lookup?fingerprint=on&op=index&search=0xF806F085738F28ACD671909DB8D7F7791716C8A4
     packages:
-      - clojure1.8
+      - leiningen
