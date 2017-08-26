@@ -118,11 +118,12 @@
 (defn with-transformed-exif-keys
   ""
   [photo]
-  (let [key-map {"CreateDate"       :created   "ExposureTime" :exposure
-                 "ScaleFactor35efl" :efl-scale "FocalLength"  :focal-length
-                 "LensType"         :lens      "Aperture"     :aperture
-                 "ISO"              :iso       "Model"        :model
-                 "ImageWidth"       :width     "ImageHeight"  :height
+  (let [key-map {"CreateDate"       :created       "ExposureTime" :exposure
+                 "ScaleFactor35efl" :efl-scale     "FocalLength"  :focal-length
+                 "LensType"         :lens          "Aperture"     :aperture
+                 "ISO"              :iso           "Model"        :model
+                 "ImageWidth"       :width         "ImageHeight"  :height
+                 "GPSPosition"      :gps-position  "GPSAltitude"  :gps-altitude
                  "SourceFile"       :file}
         transform-key (fn [kv]
                         (let [new-key (get key-map (first kv))]

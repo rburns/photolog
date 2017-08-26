@@ -43,3 +43,11 @@
 (deftest with-href-absoulte-url-prefix
   (is (= "http://foo.com/images/photo.jpg"
          (:href (p/with-href "http://foo.com/images" {:file "/on/disk/path/to/photo.jpg"})))))
+
+(deftest transform-exif-gps-position-prop
+  (is (= {:gps-position 0}
+         (p/with-transformed-exif-keys {"GPSPosition" 0}))))
+
+(deftest transform-exif-gps-altitude-prop
+  (is (= {:gps-altitude 0}
+         (p/with-transformed-exif-keys {"GPSAltitude" 0}))))
