@@ -1,8 +1,8 @@
 (ns photolog.process.output
   (:require [clojure.string :refer [replace join split]]
             [cognitect.transit :as transit]
-            [photolog.platform-node :refer [read-file-sync write-file path-basename]
-                                            create-feed feed-add-item ->feed-date]))
+            [photolog.platform-node :refer [read-file-sync write-file path-basename create-feed
+                                            feed-add-item ->feed-date]]))
 
 (defn ->transit
   ""
