@@ -2,8 +2,8 @@
   "scripts": {
     "test": "node ./target/test.js",
     "build": "npm run clean && lein run -m clojure.main script/build.clj",
+    "build-test": "lein run -m clojure.main script/build-test.clj",
     "dev": "lein run -m clojure.main script/dev.clj",
-    "ci": "lein run -m clojure.main script/ci.clj",
     "clean": "rm -rf target"
   },
   "dependencies": {
