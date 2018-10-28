@@ -196,11 +196,11 @@
       return)))
 
 (defn error-photo
- ""
- [photo]
- (cond
-   (some? (:error photo)) :errors
-   :else :photos))
+   ""
+   [photo]
+   (cond
+     (some? (:error photo)) :errors
+     :else :photos))
 
 (defn process
   ""
