@@ -6,5 +6,5 @@
                        :output-dir "process/out"
                        :target :nodejs
                        :static-fns true
-                       :optimizations :simple
+                       :optimizations :advanced
                        :parallel-build true})
