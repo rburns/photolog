@@ -71,8 +71,6 @@
       (-> (sharp source-path)
           (.rotate nil)
           (.resize width nil)
-          (.quality 95)
-          (.withoutChromaSubsampling)
           (.toFile output-path next))
       (catch :default error (next error nil)))))
 
