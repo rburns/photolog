@@ -71,8 +71,7 @@
       (-> (sharp source-path)
           (.rotate nil)
           (.resize width nil)
-          (.quality 95)
-          (.withoutChromaSubsampling)
+          (.jpeg #js {:quality 95 :chromaSubsampling "4:4:4"})
           (.toFile output-path next))
       (catch :default error (next error nil)))))
 
