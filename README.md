@@ -1,4 +1,4 @@
-# photolog
+# photolog [![](https://travis-ci.org/rburns/photolog.svg?branch=master)](https://travis-ci.org/rburns/photolog/branches)
 visual journal. current status: resizes and generates metadata for a directory of images
 
 ### dependencies
